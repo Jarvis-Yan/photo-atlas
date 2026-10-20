@@ -8,15 +8,15 @@ export class PhotoConveyor {
  private reduced=matchMedia('(prefers-reduced-motion:reduce)');private intersection:IntersectionObserver;private resize:ResizeObserver;private cycles:ResizeObserver;
  constructor(private element:HTMLElement,private options:{defaultFlow?:boolean;controls?:HTMLElement}={}){
   this.flow=options.defaultFlow??true;
-  try{const preference=sessionStorage.getItem('pixelcore-gallery-flow');if(preference==='on'||preference==='off')this.flow=preference==='on'}catch{}
+  try{const preference=sessionStorage.getItem('photo-atlas-gallery-flow');if(preference==='on'||preference==='off')this.flow=preference==='on'}catch{}
   element.classList.add('conveyor');this.controls.className='conveyor-controls';this.button.type='button';this.button.className='button subtle';this.controls.append(this.label,this.button);
   if(options.controls)options.controls.append(this.controls);else element.before(this.controls);
-  this.button.onclick=()=>{this.flow=!this.flow;try{sessionStorage.setItem('pixelcore-gallery-flow',this.flow?'on':'off')}catch{}this.layout()};
+  this.button.onclick=()=>{this.flow=!this.flow;try{sessionStorage.setItem('photo-atlas-gallery-flow',this.flow?'on':'off')}catch{}this.layout()};
   this.intersection=new IntersectionObserver(entries=>{this.visible=entries[0]?.isIntersecting||false;this.updateMotion()},{threshold:0});this.intersection.observe(element);
   this.resize=new ResizeObserver(()=>{const width=element.clientWidth;if(Math.abs(width-this.width)>1)this.layout();else this.measure()});this.resize.observe(element);
   this.cycles=new ResizeObserver(()=>this.measure());
   document.addEventListener('visibilitychange',()=>{this.updateMotion()});
-  document.addEventListener('pixelcore:viewer',()=>this.updateMotion());
+  document.addEventListener('photo-atlas:viewer',()=>this.updateMotion());
   this.reduced.addEventListener('change',()=>this.layout());
   window.addEventListener('pagehide',()=>{element.dataset.running='false';this.columnCleanup.forEach(clear=>clear())});
   window.addEventListener('pageshow',()=>this.updateMotion());

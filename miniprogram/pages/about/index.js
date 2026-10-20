@@ -12,6 +12,6 @@ Page({onPageScroll:previewScroll,imageFailed,
   openWork(){if(this.data.album&&this.data.album.cover)wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(this.data.album.cover.id)});},
   toggleTheme(){const next=this.data.theme==='dark'?'light':'dark';getApp().setTheme(next);theme.pageTheme(this);},
   copyContact(){if(this.data.settings.contact)wx.setClipboardData({data:this.data.settings.contact});},
-  onShareAppMessage(){return{title:'关于 '+(this.data.settings.site_name||'PixelCore'),path:'/pages/about/index'};},
-  onShareTimeline(){return{title:'关于 '+(this.data.settings.site_name||'PixelCore')};},
+  onShareAppMessage(){return{title:'关于 '+(this.data.settings.site_name||'Photo Atlas'),path:'/pages/about/index'};},
+  onShareTimeline(){return{title:'关于 '+(this.data.settings.site_name||'Photo Atlas')};},
 });

@@ -78,5 +78,5 @@ Page({imageFailed,
  mapFailed(){this._mapSelection=undefined;if(this._mapCamera)this._mapCamera.invalidate();this.setData({mapError:'地图暂未加载，点此重试；仍可沿时间浏览照片。'});},
  cardResize(){this.measure();this.scheduleMap();},
  openPhoto(event){if(event.detail.pure){const p=event.detail.photo;if(p&&p.id)wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(p.id)+'&viewer=1'});return;}wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(event.currentTarget.dataset.id)});},
- onShareAppMessage(){return{title:'PixelCore 摄影足迹',path:'/pages/footprints/index'};},onShareTimeline(){return{title:'PixelCore 摄影足迹'};}
+ onShareAppMessage(){return{title:'Photo Atlas 摄影足迹',path:'/pages/footprints/index'};},onShareTimeline(){return{title:'Photo Atlas 摄影足迹'};}
 });

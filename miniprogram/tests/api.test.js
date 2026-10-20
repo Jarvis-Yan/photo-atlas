@@ -9,7 +9,7 @@ test('public cache merges concurrent reads, force-refreshes, and never caches fa
  api.invalidate();
  const first=api.request('/public/site'),second=api.request('/public/site');
  assert.equal(requests.length,1);
- success(0,{settings:{site_name:'PixelCore'},albums:[],posts:[]});
+ success(0,{settings:{site_name:'Photo Atlas'},albums:[],posts:[]});
  assert.deepEqual(await first,await second);
  await api.request('/public/site');assert.equal(requests.length,1);
  const refresh=api.request('/public/site',{force:true});assert.equal(requests.length,2);success(1,{settings:{site_name:'New'},albums:[],posts:[]});await refresh;
@@ -27,14 +27,14 @@ test('domain failures are actionable and malformed success responses cannot beco
   await assert.rejects(read,error=>error.code==='INVALID_RESPONSE');
  }
  index=requests.length;const retry=api.home(true);
- success(index,JSON.stringify({settings:{site_name:'PixelCore'},photos:[{id:'one',tags:[]}],albums:[],posts:[]}));
+ success(index,JSON.stringify({settings:{site_name:'Photo Atlas'},photos:[{id:'one',tags:[]}],albums:[],posts:[]}));
  assert.equal((await retry).photos.length,1);
 });
 
 test('home seeds shared site data for instant first tab switch',async()=>{
  api.invalidate();const index=requests.length;
- const home=api.home(true);success(index,{settings:{site_name:'PixelCore'},photos:[],albums:[],posts:[]});await home;
- const before=requests.length;const site=await api.site();assert.equal(requests.length,before);assert.equal(site.settings.site_name,'PixelCore');
+ const home=api.home(true);success(index,{settings:{site_name:'Photo Atlas'},photos:[],albums:[],posts:[]});await home;
+ const before=requests.length;const site=await api.site();assert.equal(requests.length,before);assert.equal(site.settings.site_name,'Photo Atlas');
 });
 
 test('list to detail reuses photo data, while forced refresh and invalidation reach server',async()=>{

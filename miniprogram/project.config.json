@@ -1,7 +1,7 @@
 {
   "appid": "touristappid",
-  "projectname": "pixelcore-miniprogram",
-  "description": "PixelCore 摄影与记录微信小程序",
+  "projectname": "photo-atlas-miniprogram",
+  "description": "Photo Atlas 摄影与记录微信小程序",
   "miniprogramRoot": "./",
   "compileType": "miniprogram",
   "libVersion": "latest",

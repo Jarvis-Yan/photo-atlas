@@ -9,7 +9,7 @@ let csrf='';
 export function setCsrf(value:string){csrf=value}
 export async function api<T>(path:string,options:RequestInit={}):Promise<T>{
  const publicRead=path.startsWith('/public/')&&(!options.method||options.method==='GET')&&!options.signal;
- const cacheKey='pixelcore-public-v3:'+path+(path==='/public/home'?'|'+new Date(Date.now()+8*3600000).toISOString().slice(0,10):'');
+ const cacheKey='photo-atlas-public-v3:'+path+(path==='/public/home'?'|'+new Date(Date.now()+8*3600000).toISOString().slice(0,10):'');
  if(publicRead){try{const cached=JSON.parse(sessionStorage.getItem(cacheKey)||'null');if(cached&&cached.expires>Date.now())return cached.data as T}catch{}}
  const headers=new Headers(options.headers);
  if(options.body && typeof options.body==='string')headers.set('Content-Type','application/json');
@@ -26,7 +26,7 @@ export async function api<T>(path:string,options:RequestInit={}):Promise<T>{
  if(publicRead){try{
   const expires=Date.now()+30000;
   sessionStorage.setItem(cacheKey,JSON.stringify({expires,data:body}));
-  if(path==='/public/home')sessionStorage.setItem('pixelcore-public-v3:/public/site',JSON.stringify({expires,data:{settings:body.settings,albums:body.albums,posts:body.posts}}));
+  if(path==='/public/home')sessionStorage.setItem('photo-atlas-public-v3:/public/site',JSON.stringify({expires,data:{settings:body.settings,albums:body.albums,posts:body.posts}}));
  }catch{}}
  return body as T;
  } catch(error) {if(timedOut)throw new ApiError(0,'TIMEOUT','连接超时；已保存的部分会保留，可以继续或刷新重试');throw error}
@@ -37,4 +37,4 @@ export function humanSize(bytes:number){return bytes>=1048576?(bytes/1048576).to
 export function errorText(error:unknown){if(error instanceof ApiError)return error.message;if(error instanceof Error&&error.name==='AbortError')return '已暂停';return '连接暂时中断，请检查网络后继续'}
 let timer:ReturnType<typeof setTimeout>;
 export function notice(message:string,error=false){const element=document.getElementById('notice');if(!element)return;clearTimeout(timer);element.textContent=message;element.hidden=false;element.classList.toggle('error',error);timer=setTimeout(()=>{element.hidden=true},error?8000:4000)}
-export function initTheme(){const stored=localStorage.getItem('pixelcore-theme');const initial=stored|| (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=initial;document.querySelectorAll('[data-theme-toggle]').forEach(button=>button.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;localStorage.setItem('pixelcore-theme',theme)}))}
+export function initTheme(){const stored=localStorage.getItem('photo-atlas-theme');const initial=stored|| (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=initial;document.querySelectorAll('[data-theme-toggle]').forEach(button=>button.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;localStorage.setItem('photo-atlas-theme',theme)}))}

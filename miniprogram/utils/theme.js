@@ -1,5 +1,5 @@
 function initialTheme() {
-  const saved = wx.getStorageSync('pixelcore-theme');
+  const saved = wx.getStorageSync('photo-atlas-theme');
   if (saved === 'light' || saved === 'dark') return saved;
   try {
     const info = typeof wx.getAppBaseInfo === 'function' ? wx.getAppBaseInfo() : {};
@@ -11,7 +11,7 @@ function initialTheme() {
 
 function setTheme(value) {
   const next = value === 'dark' ? 'dark' : 'light';
-  wx.setStorageSync('pixelcore-theme', next);
+  wx.setStorageSync('photo-atlas-theme', next);
   wx.setNavigationBarColor({
     frontColor: next === 'dark' ? '#ffffff' : '#000000',
     backgroundColor: next === 'dark' ? '#111927' : '#f3f6fb',

@@ -27,6 +27,6 @@ Page({onPageScroll:previewScroll,
       else wx.showToast({title:'保存失败，请稍后重试',icon:'none'});
     }finally{wx.hideLoading();this.setData({saving:false});}
   },
-  onShareAppMessage(){const p=this.data.photo||{};return{title:p.title||'PixelCore 作品',path:'/pages/photo/index?id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
-  onShareTimeline(){const p=this.data.photo||{};return{title:p.title||'PixelCore 作品',query:'id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
+  onShareAppMessage(){const p=this.data.photo||{};return{title:p.title||'Photo Atlas 作品',path:'/pages/photo/index?id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
+  onShareTimeline(){const p=this.data.photo||{};return{title:p.title||'Photo Atlas 作品',query:'id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
 });

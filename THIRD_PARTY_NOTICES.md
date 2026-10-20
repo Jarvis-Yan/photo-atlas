@@ -1,6 +1,6 @@
 # Third-party notices
 
-The root MIT license covers PixelCore's own source code. It does not relicense the following data, dependencies, services or users' uploaded works.
+The root MIT license covers Photo Atlas's own source code. It does not relicense the following data, dependencies, services or users' uploaded works.
 
 ## GeoNames geographical data — CC BY 4.0
 
@@ -11,7 +11,7 @@ The root MIT license covers PixelCore's own source code. It does not relicense t
 - Terms: https://www.geonames.org/about.html
 - License: Creative Commons Attribution 4.0 International, https://creativecommons.org/licenses/by/4.0/
 
-Keep this attribution and the applicable data license when redistributing this file. PixelCore's API and map UI retain GeoNames attribution.
+Keep this attribution and the applicable data license when redistributing this file. Photo Atlas's API and map UI retain GeoNames attribution.
 
 ## Web map
 

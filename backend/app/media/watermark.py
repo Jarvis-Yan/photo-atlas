@@ -15,7 +15,7 @@ def generate(source, folder):
     # Small corner signature; preserve every source pixel in the output dimensions.
     font=max(12,min(120,round(min(image.width,image.height)*0.026)))
     margin=max(8,round(min(image.width,image.height)*0.035))
-    text='© PixelCore'
+    text='© Photo Atlas'
     def signature(color):
         mark=pyvips.Image.text('<span foreground="'+color+'">'+html.escape(text)+'</span>',font=f'sans {font}',rgba=True)
         if mark.width>image.width-2*margin:

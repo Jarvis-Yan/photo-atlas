@@ -12,7 +12,7 @@ CATEGORIES = ('人像', '自然', '城市', '星空')
 
 
 def rank(seed, value):
-    return hashlib.sha256(('pixelcore-daily-v1\0' + seed + '\0' + value).encode()).digest()
+    return hashlib.sha256(('photo-atlas-daily-v1\0' + seed + '\0' + value).encode()).digest()
 
 
 def mixed_order(rows):

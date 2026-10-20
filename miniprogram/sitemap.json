@@ -1,4 +1,4 @@
 {
-  "desc": "PixelCore public pages",
+  "desc": "Photo Atlas public pages",
   "rules": [{"action": "allow", "page": "*"}]
 }

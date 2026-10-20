@@ -24,7 +24,7 @@ from .uploads.service import UploadService
 from .content.service import ContentService,safe_markdown
 from .schemas import Login,UploadInit,AlbumInput,PhotoInput,PhotoBatchInput,PostInput,SettingInput,PhotoIdsInput,MetadataBatchInput,DuplicateReviewInput,AlbumMergeInput
 
-COOKIE='pc_session'
+COOKIE='pa_session'
 
 
 def create_app(config=None):
@@ -38,7 +38,7 @@ def create_app(config=None):
         yield
         with db.connect() as conn:
             conn.execute('PRAGMA wal_checkpoint(PASSIVE)')
-    app=FastAPI(title='PixelCore',version='0.1.0',lifespan=lifecycle,docs_url=None,redoc_url=None)
+    app=FastAPI(title='Photo Atlas',version='0.1.0',lifespan=lifecycle,docs_url=None,redoc_url=None)
     app.state.db=db;app.state.config=config;app.state.uploads=uploads
     from .admin_compression import AdminListCompression
     app.add_middleware(AdminListCompression)
@@ -100,7 +100,7 @@ def create_app(config=None):
 
     @app.get('/health')
     def health():
-        return {'status':'ok','service':'pixelcore','version':'0.1.0'}
+        return {'status':'ok','service':'photo-atlas','version':'0.1.0'}
 
     @app.get('/ready')
     def ready():
@@ -478,7 +478,7 @@ def create_app(config=None):
                 if not record:raise AppError('相册不存在','NOT_FOUND',404)
             template=config.frontend/section/'index.html'
             if template.exists():
-                body=template.read_text().replace('<title>PixelCore</title>','<title>'+html.escape(record['title'])+' · PixelCore</title>')
+                body=template.read_text().replace('<title>Photo Atlas</title>','<title>'+html.escape(record['title'])+' · Photo Atlas</title>')
                 return HTMLResponse(body)
         if not path and (config.frontend/'index.html').exists():return FileResponse(config.frontend/'index.html')
         raise AppError('页面不存在','NOT_FOUND',404)

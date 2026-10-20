@@ -1,4 +1,4 @@
-# PixelCore 微信小程序
+# Photo Atlas 微信小程序
 
 与网页版共用基础后端，只访问 `/api/public/*` 及公开媒体。
 

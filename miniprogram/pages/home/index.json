@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "PixelCore",
+  "navigationBarTitleText": "Photo Atlas",
   "enablePullDownRefresh": true,
   "usingComponents": {
     "photo-card": "/components/photo-card/index",

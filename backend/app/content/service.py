@@ -6,7 +6,7 @@ import bleach
 import markdown
 from ..errors import AppError
 
-DEFAULT_SETTINGS={'site_name':'PixelCore','subtitle':'摄影作品与旅行记录','description':'风景、街巷，以及拍摄时的随笔。','about':'这里是我的个人影像空间，收藏旅行中的风景，也记录身边的街巷。','contact':'','copyright':'© PixelCore · 摄影与记录'}
+DEFAULT_SETTINGS={'site_name':'Photo Atlas','subtitle':'摄影作品与旅行记录','description':'风景、街巷，以及拍摄时的随笔。','about':'这里是我的个人影像空间，收藏旅行中的风景，也记录身边的街巷。','contact':'','copyright':'© Photo Atlas · 摄影与记录'}
 
 
 def safe_markdown(text):

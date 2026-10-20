@@ -37,7 +37,7 @@ def uploaded(client,content=None):
 
 def test_cookie_csrf_origin_and_logout(stack):
     app,client,config=stack
-    assert client.cookies.get('pc_session')
+    assert client.cookies.get('pa_session')
     assert client.put('/api/admin/settings',json={},headers={'X-CSRF-Token':''}).status_code==403
     assert client.post('/api/auth/login',json={'username':'admin','password':PASSWORD},headers={'Origin':'https://evil.example'}).status_code==403
     assert client.post('/api/auth/logout').status_code==200
@@ -153,7 +153,7 @@ def test_expired_temporary_cleanup_keeps_active_upload_and_original(stack):
 def test_canonical_cutover_keeps_query_blocks_alias_writes_and_supports_head(stack):
     from dataclasses import replace
     app,client,config=stack
-    config.frontend.mkdir();(config.frontend/'index.html').write_text('<html>PixelCore</html>')
+    config.frontend.mkdir();(config.frontend/'index.html').write_text('<html>Photo Atlas</html>')
     main=create_app(replace(config,origin='https://portfolio.example',canonical_aliases=('www.portfolio.example','preview.portfolio.example')))
     with TestClient(main,base_url='https://portfolio.example',follow_redirects=False) as root:
         assert root.get('/').status_code==200

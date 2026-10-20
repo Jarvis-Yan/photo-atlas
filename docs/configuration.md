@@ -4,16 +4,16 @@
 
 ## 环境变量
 
-- `PC_ADMIN_USER`：首次建库的管理员用户名，默认 `admin`。
-- `PC_ADMIN_PASSWORD`：首次建库的管理员密码，至少 12 字符，无内置密码。配置中的旧示例占位密码不能使用。
-- `PC_PUBLIC_ORIGIN`：唯一入口，默认 `http://127.0.0.1:18770`，不带路径或末尾斜杠。
-- `PC_SECURE_COOKIE`：默认 `true`；本地 HTTP 的 `.env.example` 设置为 `false`。
-- `PC_DATA_ROOT`：原始上传文件、展示图和临时分块目录，启动脚本默认使用仓库 `data/`。
-- `PC_DB_PATH`：默认 `PC_DATA_ROOT/database.sqlite3`。
-- `PC_FRONTEND_ROOT`：默认本仓库 `frontend/dist`，一般无需设置。
-- `PC_MAX_UPLOAD_BYTES`：单文件上传上限，默认 8589934592（8 GiB）。前端选择器也有 8 GiB 上限。
-- `PC_REQUIRED_MOUNT`：可选；必须已挂载的存储挂载点。设置后挂载不可用将阻止启动或上传处理。
-- `PC_CANONICAL_ALIASES`：可选；逗号分隔的精确别名主机名，GET 重定向到主入口，不允许通配符。
+- `PA_ADMIN_USER`：首次建库的管理员用户名，默认 `admin`。
+- `PA_ADMIN_PASSWORD`：首次建库的管理员密码，至少 12 字符，无内置密码。配置中的旧示例占位密码不能使用。
+- `PA_PUBLIC_ORIGIN`：唯一入口，默认 `http://127.0.0.1:18770`，不带路径或末尾斜杠。
+- `PA_SECURE_COOKIE`：默认 `true`；本地 HTTP 的 `.env.example` 设置为 `false`。
+- `PA_DATA_ROOT`：原始上传文件、展示图和临时分块目录，启动脚本默认使用仓库 `data/`。
+- `PA_DB_PATH`：默认 `PA_DATA_ROOT/database.sqlite3`。
+- `PA_FRONTEND_ROOT`：默认本仓库 `frontend/dist`，一般无需设置。
+- `PA_MAX_UPLOAD_BYTES`：单文件上传上限，默认 8589934592（8 GiB）。前端选择器也有 8 GiB 上限。
+- `PA_REQUIRED_MOUNT`：可选；必须已挂载的存储挂载点。设置后挂载不可用将阻止启动或上传处理。
+- `PA_CANONICAL_ALIASES`：可选；逗号分隔的精确别名主机名，GET 重定向到主入口，不允许通配符。
 
 修改 `.env` 中的管理员用户名或密码**不会更改已有数据库中的账号**；首次建库时才使用它们。当前基础版没有密码修改界面。请妥善保存密码；已有站点需要维护者通过离线维护方式重置密码，不能靠删除数据库处理。
 

@@ -3,7 +3,7 @@
 ## 单机部署
 
 1. 在自己的服务器安装 Node.js 24 和 Python 3.12，安装依赖并构建网页。
-2. 配置独立 `.env`，使用自己的随机管理员密码和 HTTPS `PC_PUBLIC_ORIGIN`，设置 `PC_SECURE_COOKIE=true`。
+2. 配置独立 `.env`，使用自己的随机管理员密码和 HTTPS `PA_PUBLIC_ORIGIN`，设置 `PA_SECURE_COOKIE=true`。
 3. 将存储和数据库放在有备份的持久目录中；单独保护 `.env` 的读取权限。
 4. 使用进程管理器分别运行 API 与 worker。两者读取相同环境变量、数据库和数据目录，仅部署一个写入站点。
 5. 在 TLS 反向代理后运行 Uvicorn，例如：

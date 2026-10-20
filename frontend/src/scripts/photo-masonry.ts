@@ -80,7 +80,7 @@ export class PhotoMasonry {
    if(this.reduced.matches)tile.node.classList.add('is-revealed');
   });
   if(this.drag?.active)this.positionDrag();
-  this.root.dispatchEvent(new Event('pixelcore:layout'));
+  this.root.dispatchEvent(new Event('photo-atlas:layout'));
  }
  private startDrag(event:PointerEvent){
   if(event.button!==0||event.pointerType==='touch'||(event.target as Element).closest('button,.photo-flip'))return;

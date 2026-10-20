@@ -96,7 +96,7 @@ export function featuredCover(root:HTMLElement,photos:Photo[],open:(index:number
  link.addEventListener('lostpointercapture',()=>{pointer=null;reason('touch',false)});
  link.addEventListener('click',event=>{if(Date.now()<suppressUntil){event.preventDefault();return}if(ready){event.preventDefault();open(current)}});
  document.addEventListener('visibilitychange',()=>reason('hidden',document.hidden));
- document.addEventListener('pixelcore:viewer',()=>reason('viewer',Boolean(document.querySelector('dialog[open]'))));
+ document.addEventListener('photo-atlas:viewer',()=>reason('viewer',Boolean(document.querySelector('dialog[open]'))));
  window.addEventListener('pagehide',()=>{clearTimeout(preload);reason('page',true)});
  window.addEventListener('pageshow',()=>reason('page',false));
  const observer=new IntersectionObserver(entries=>reason('offscreen',!entries[0]?.isIntersecting),{threshold:.15});observer.observe(root);

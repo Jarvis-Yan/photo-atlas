@@ -1,4 +1,4 @@
-# PixelCore
+# Photo Atlas
 
 一个可以独立部署的摄影作品集：Astro 网页、原生微信小程序与 FastAPI 基础后端，共用一套照片、相册和随笔数据。
 
@@ -38,7 +38,7 @@ npm --prefix frontend run build
 .venv/bin/python scripts/setup.py
 ```
 
-`setup.py` 会创建仅本机可读的 `.env` 并生成随机管理员密码，不覆盖已有配置。打开 `.env` 查看 `PC_ADMIN_USER` 和 `PC_ADMIN_PASSWORD`。默认使用 `http://127.0.0.1:18770`，内容保存在本仓库 `data/`，均已加入 Git 忽略规则。
+`setup.py` 会创建仅本机可读的 `.env` 并生成随机管理员密码，不覆盖已有配置。打开 `.env` 查看 `PA_ADMIN_USER` 和 `PA_ADMIN_PASSWORD`。默认使用 `http://127.0.0.1:18770`，内容保存在本仓库 `data/`，均已加入 Git 忽略规则。
 
 在两个终端分别启动：
 
@@ -54,7 +54,7 @@ npm --prefix frontend run build
 
 访问 [作品集](http://127.0.0.1:18770/) 和 [管理后台](http://127.0.0.1:18770/admin/)。以 `.env` 中的账号登录。首次启动自动建表和创建管理员；新照片默认未发布，等待处理完成后编辑并发布。
 
-本地 HTTP 需要 `PC_SECURE_COOKIE=false`；正式 HTTPS 部署使用 `true`。浏览器地址应与 `PC_PUBLIC_ORIGIN` 完全一致，包含主机名和端口，否则写请求可能被来源校验拦截。
+本地 HTTP 需要 `PA_SECURE_COOKIE=false`；正式 HTTPS 部署使用 `true`。浏览器地址应与 `PA_PUBLIC_ORIGIN` 完全一致，包含主机名和端口，否则写请求可能被来源校验拦截。
 
 ### 可选演示内容
 

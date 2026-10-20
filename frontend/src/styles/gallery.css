@@ -13,7 +13,7 @@ body{background:var(--bg);-webkit-font-smoothing:antialiased}.site-shell{max-wid
 @media(prefers-reduced-motion:no-preference){.folio-intro{animation:folio-in .45s ease-out both}@keyframes folio-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 
-/* Deep ocean / glacier / ice blue: PixelCore's photographic signature. */
+/* Deep ocean / glacier / ice blue: Photo Atlas's photographic signature. */
 .folio-hero{background:#15243a;padding:32px;gap:32px;color:#edf1f7}.folio-intro{padding:12px}.folio-intro .eyebrow{color:#8ccff2}.folio-description,.folio-index{color:#b3c2d7}.folio-index{border-color:#3a4b63}.folio-hero .button.primary{background:#edf1f7;color:#15243a;border-color:#edf1f7}.folio-hero .button.subtle{background:transparent;color:#edf1f7;border-color:#6a7b92}.folio-hero .button:hover{background:#8ccff2;color:#15243a;border-color:#8ccff2}.category-filter .active{border-color:var(--blue)}.collection-label{border-top-color:var(--blue)}
 @media(max-width:700px){.folio-hero{padding:24px 20px 20px;margin-top:24px;gap:26px}.folio-intro{padding:0}.folio-intro h1{font-size:36px;letter-spacing:-1px}.folio-hero .hero-actions{gap:10px}.folio-hero .button{padding:12px;font-size:13px}.folio-cover{aspect-ratio:1.22}.folio-intro .eyebrow{font-size:9px;letter-spacing:1.2px}}
 

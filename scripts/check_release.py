@@ -35,6 +35,19 @@ def main():
         disallowed = (parts & FORBIDDEN_PARTS) - ({'uploads'} if str(rel).startswith('backend/app/uploads/') else set())
         if disallowed or p.suffix.lower() in FORBIDDEN_SUFFIXES or p.name == 'project.private.config.json' or (p.name.startswith('.env') and p.name != '.env.example'):
             errors.append(f'{rel}: forbidden source asset or configuration')
+        if p.suffix == '.gif':
+            from PIL import Image
+            if rel.parent != Path('docs/assets') or p.stat().st_size > 5 * 1024 * 1024:
+                errors.append(f'{rel}: unexpected or oversized documentation animation')
+                continue
+            try:
+                with Image.open(p) as animation:
+                    if animation.format != 'GIF' or not 2 <= animation.n_frames <= 600 or max(animation.size) > 1600:
+                        errors.append(f'{rel}: invalid documentation animation')
+                    animation.verify()
+            except (OSError, ValueError):
+                errors.append(f'{rel}: unreadable documentation animation')
+            continue
         if p.suffix in {'.png', '.gz'}:
             continue
         try:

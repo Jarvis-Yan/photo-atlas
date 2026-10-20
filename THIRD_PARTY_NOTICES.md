@@ -29,6 +29,6 @@ JavaScript and Python dependencies, including binary libvips components, keep th
 
 ## Images and identity
 
-No personal photography, RAW/XMP files, portfolio caption records or personal branding pack is included. The demo generator draws new geometric illustrations locally. The small map marker is a generic interface asset. Uploaders remain responsible for the rights to their own photographs and content. Use your own site identity and small-program registration.
+No personal photography, RAW/XMP files, portfolio caption records or personal branding pack is included. The demo generator draws new geometric illustrations locally. The interface recordings and screenshots under `docs/assets/` show this synthetic local demo, without personal photography or production administrator information, and are included under the root MIT license. The small map marker is a generic interface asset. Uploaders remain responsible for the rights to their own photographs and content. Use your own site identity and small-program registration.
 
 The open-source edition does not include the React Bits-derived circular renderer. Its featured carousel uses the project's independent implementation.

@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "PixelCore",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "photo-card": "/components/photo-card/index",
+    "loading-state": "/components/loading-state/index",
+    "photo-waterfall": "/components/photo-waterfall/index",
+    "featured-cover": "/components/featured-cover/index",
+    "progressive-image": "/components/progressive-image/index"
+  },
+  "onReachBottomDistance": 60
+}

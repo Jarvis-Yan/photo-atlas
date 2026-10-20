@@ -1,0 +1,36 @@
+<wxs src="./pull.wxs" module="pull"/>
+<view class="page home-touch-surface {{theme}}" data-pull-config="{{photos.length+':'+(galleryActive && mode==='all' && !loading && !loadingMore && !error && photos.length>0 && photos.length<total)+':'+pullNear}}" bindtouchstart="{{pull.start}}" bindtouchmove="{{pull.move}}" bindtouchend="{{pull.end}}" bindtouchcancel="{{pull.cancel}}">
+  <view class="hero glass">
+    <view class="hero-title">{{settings.subtitle === '摄影作品与旅行记录' ? '摄影与旅行记录' : settings.subtitle || '摄影与旅行记录'}}</view>
+    <view class="hero-copy">{{settings.description || '风景、街巷，以及拍摄时的随笔。'}}</view>
+    <featured-cover wx:if="{{daily.length}}" photos="{{daily}}" active="{{galleryActive}}" bind:open="openPhoto"/>
+    <view class="actions"><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="button primary" bindtap="explore">探索作品 ↘</button><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="button subtle" bindtap="openFootprints">浏览摄影足迹 ↗</button></view>
+  </view>
+  <view class="section-heading" id="collection"><view><view class="heading">{{sectionTitle}}</view><view class="section-copy" wx:if="{{sectionDescription}}">{{sectionDescription}}</view></view><view class="collection-tools"><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" bindtap="toggleSearch">搜索{{query?' ·':''}}</button><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" bindtap="toggleBrowse">浏览</button></view></view>
+  <view class="scope"><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="scope-button {{mode==='daily'?'selected':''}}" data-mode="daily" bindtap="chooseMode">今日精选</button><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="scope-button {{mode==='all'?'selected':''}}" data-mode="all" bindtap="chooseMode">全部作品</button></view>
+  <view class="collection-count">{{loadingMore ? '正在加载…' : mode==='all' ? '已显示 '+photos.length+' / '+total+' 张作品' : total+' 张作品'}}</view>
+  <input wx:if="{{searchOpen || query}}" class="input search" type="text" maxlength="240" placeholder="搜索标题、标签或地点" value="{{query}}" bindinput="onSearch" />
+  <view class="browse-options" wx:if="{{browseOpen}}"><text>原比例照片墙</text></view>
+  <view class="categories"><view wx:for="{{categories}}" wx:key="value" class="tag {{category===item.value?'active':''}}" data-value="{{item.value}}" bindtap="chooseCategory">{{item.label}}</view></view>
+  <view class="collection-results">
+  <loading-state loading="{{loading}}" error="{{photos.length?'':error}}" bind:retry="retry" />
+  <photo-waterfall flip wx:if="{{!loading && photos.length}}" photos="{{photos}}" active="{{galleryActive}}" layout-mode="{{mode==='daily' || total<=12?'bounded':'masonry'}}" show-controls="{{false}}" bind:open="openPhoto"/>
+  <view class="empty glass" wx:if="{{!loading && !loadingMore && !error && !photos.length}}"><view>{{mode==='daily'?'今日精选中没有匹配的作品。':'没有符合条件的作品。'}}</view><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" wx:if="{{mode==='daily'}}" class="button" data-mode="all" bindtap="chooseMode">查看全部作品</button><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="button subtle" bindtap="clearFilters">清除筛选</button></view>
+  <view class="collection-bridge {{loadingMore?'is-loading':''}}" wx:if="{{mode==='all' && photos.length && !error}}">
+   <view class="bridge-meta"><text>浏览进度</text><text>{{photos.length}} / {{total}}</text></view>
+   <view class="bridge-center" wx:if="{{photos.length<total}}"><view class="bridge-title">{{loadingMore?'正在展开':'下一组作品'}}</view><view class="bridge-track"><view class="bridge-track-fill"/></view></view>
+   <view class="bridge-mark" wx:if="{{photos.length<total}}">↓</view>
+   <view class="collection-complete" wx:else>已显示全部 {{total}} 张作品</view>
+  </view>
+  <loading-state wx:if="{{error && photos.length}}" error="{{error}}" bind:retry="retry" />
+  </view>
+  <view class="home-journey" wx:if="{{journey && mode==='daily' && !category && !query}}">
+    <view class="section-heading"><view class="heading">{{journey.place}}的拍摄记录</view></view>
+    <view class="journey-date" wx:if="{{journey.date}}">{{journey.date}}</view>
+    <button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="journey-link" bindtap="openJourney">查看这段足迹 ↗</button>
+    <view class="journey-grid"><view class="journey-photo {{journey.photos.length===3 && index===0?'full':''}}" wx:for="{{journey.photos}}" wx:key="id" data-id="{{item.id}}" bindtap="openJourneyPhoto"><progressive-image photo="{{item}}" height="{{(journey.photos.length===3 && index===0?686:333)*item.height/item.width+'rpx'}}" clear-size="1600" active="{{galleryActive}}"/><view>{{item.title}}</view></view></view>
+    <button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="journey-link" bindtap="openFootprints">沿着地图，浏览全部足迹 →</button>
+  </view>
+  <view wx:if="{{posts.length}}"><view class="section-heading"><view class="heading">拍摄随笔</view><text class="more" bindtap="openJournal">全部随笔 →</text></view><view class="post-list"><view class="post-card glass" wx:for="{{posts}}" wx:key="id" data-id="{{item.id}}" bindtap="openPost"><view class="card-title">{{item.title}}</view><view class="post-copy">{{item.excerpt}}</view><view class="card-meta">{{item.dateText}} · 阅读随笔 →</view></view></view></view>
+  <view class="safe-bottom" />
+</view>

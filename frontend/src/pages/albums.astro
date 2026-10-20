@@ -1,0 +1,18 @@
+---
+import Site from '../layouts/Site.astro';
+import '../styles/collections.css';
+---
+<Site page="albums">
+  <section class="page-heading collection-page-heading">
+    <div><h1 class="public-title">相册</h1><p>按地点、项目与专题，收藏每一段影像。</p></div>
+    <p id="album-summary" class="collection-summary" aria-live="polite"></p>
+  </section>
+  <a id="album-back" class="collection-back" href="/albums/" hidden>← 全部相册</a>
+  <nav id="album-types" class="category-filter album-types" aria-label="相册类型">
+    <button class="button active" data-kind="" aria-pressed="true">全部相册</button>
+    <button class="button" data-kind="travel" aria-pressed="false">旅行</button>
+    <button class="button" data-kind="project" aria-pressed="false">拍摄项目</button>
+    <button class="button" data-kind="series" aria-pressed="false">专题</button>
+  </nav>
+  <div id="album-content" class="album-grid album-index"><p class="collection-loading" role="status">正在加载相册…</p></div>
+</Site>

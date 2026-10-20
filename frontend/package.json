@@ -1,0 +1,23 @@
+{
+  "name": "pixelcore-web",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "node scripts/copy-map-worker.mjs && astro build",
+    "check": "tsc --noEmit",
+    "test": "node --test scripts/*.test.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "^2.4.0",
+    "astro": "7.3.8",
+    "maplibre-gl": "^6.14.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

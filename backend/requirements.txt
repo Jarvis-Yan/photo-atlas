@@ -1,0 +1,8 @@
+fastapi>=0.115,<1
+uvicorn>=0.34,<1
+pillow>=11.3,<13
+markdown>=3.7,<4
+bleach>=6.2,<7
+python-dotenv>=1.0,<2
+pyvips[binary]>=3.1,<4
+ImageHash>=4.3,<5

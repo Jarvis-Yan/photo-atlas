@@ -1,0 +1,66 @@
+---
+import Site from '../layouts/Site.astro';
+import '../styles/footprints.css';
+---
+<Site page="footprints">
+  <div class="atlas-page-layout">
+    <div id="atlas-map-slot" class="atlas-map-slot">
+    <section id="atlas-map-panel" class="atlas-map-panel" aria-label="摄影足迹地图与当前地点">
+      <div class="atlas-map-card">
+        <div class="atlas-map-column">
+          <div id="atlas-map" aria-label="摄影足迹地图"></div>
+          <p id="atlas-map-loading" class="atlas-map-loading" role="status">地图加载中，可以先浏览照片。</p>
+          <p id="atlas-map-error" class="atlas-map-error" hidden>地图暂未加载，仍可沿时间浏览照片。</p>
+          <p id="atlas-location-note" class="atlas-location-note" hidden>这张照片暂无公开地图位置。</p>
+        </div>
+        <aside id="atlas-preview" class="atlas-context" aria-label="当前时间与地点"><p>正在加载拍摄记录…</p></aside>
+      </div>
+      <div class="atlas-map-caption">
+        <details><summary>位置说明</summary><p>地图标记表示拍摄区域，公开位置已模糊化；推测地点会单独标注。点击地点可筛选作品。</p></details>
+        <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames · CC BY 4.0</a>
+      </div>
+    </section>
+    </div>
+    <div id="atlas-story" class="atlas-story" role="region" aria-label="按时间浏览摄影作品" tabindex="0">
+  <section class="atlas-intro">
+    <div><h1 class="public-title">摄影足迹</h1><p>拖动右侧刻度浏览时间，停下后查看拍摄地点。</p></div>
+    <p id="atlas-stats" class="atlas-summary" aria-live="polite"></p>
+  </section>
+
+  <div class="atlas-toolbar" aria-label="足迹筛选">
+    <label class="atlas-place-select"><span class="sr-only">拍摄地点</span><select id="atlas-place"><option value="">全部地点</option></select></label>
+    <label class="atlas-search-field"><span class="sr-only">搜索足迹</span><input id="atlas-search" type="search" maxlength="240" placeholder="地点、标题或标签"/></label>
+    <details class="atlas-advanced" id="atlas-advanced">
+      <summary>筛选</summary>
+      <div class="atlas-advanced-panel">
+        <label>题材<select id="atlas-category"><option value="">全部作品</option><option>人像</option><option>自然</option><option>城市</option><option>星空</option></select></label>
+        <div class="atlas-range-field"><label for="year-from">开始年份 <output id="year-from-value" for="year-from"></output></label><input id="year-from" type="range" disabled/></div>
+        <div class="atlas-range-field"><label for="year-to">结束年份 <output id="year-to-value" for="year-to"></output></label><input id="year-to" type="range" disabled/></div>
+        <label class="atlas-undated-field" id="atlas-undated-field" hidden><input id="include-undated" type="checkbox" checked/>包含日期待补充的作品</label>
+        <button type="button" class="atlas-text-button" id="atlas-clear">重置全部筛选</button>
+      </div>
+    </details>
+  </div>
+  <div id="atlas-active-filters" class="atlas-active-filters" aria-label="当前筛选" hidden></div>
+
+
+    <section id="atlas-results" class="atlas-results" aria-labelledby="atlas-result-title">
+      <div class="atlas-results-heading"><h2 id="atlas-result-title">拍摄记录</h2><p id="atlas-result-count" role="status" aria-live="polite">正在加载摄影足迹…</p></div>
+      <div id="atlas-gallery"></div>
+      <div id="atlas-timeline-tail" aria-hidden="true"></div>
+      <button type="button" class="button" id="atlas-retry" hidden>重新加载</button>
+    </section>
+    </div>
+  </div>
+
+  <nav id="atlas-time-rail" class="atlas-time-rail" aria-label="时间导航" data-ui hidden>
+    <span class="sr-only" id="atlas-rail-help">上下拖动定位拍摄日期，停下后地图更新；最上方为全部足迹。</span>
+    <div class="atlas-rail-body">
+      <div id="atlas-time-ticks" class="atlas-time-ticks" aria-hidden="true"></div>
+      <input id="atlas-time-progress" class="atlas-time-progress" type="range" min="0" max="1000" step="1" value="0" aria-label="按拍摄时间快速定位" aria-orientation="vertical" aria-describedby="atlas-rail-help" aria-controls="atlas-gallery"/>
+      <output id="atlas-time-current" class="atlas-time-current" for="atlas-time-progress"></output>
+    </div>
+    <button type="button" id="atlas-time-top" class="atlas-time-top" aria-label="回到页面顶部">顶部</button>
+  </nav>
+  <script>import '../scripts/footprints';</script>
+</Site>

@@ -1,0 +1,75 @@
+/* Shared title and spacing scale across the public portfolio. */
+:root {
+  --page-title-size: clamp(36px, 3.6vw, 52px);
+  --page-title-weight: 550;
+  --page-title-leading: 1.15;
+  --page-title-tracking: -.04em;
+  --page-header-top: 32px;
+  --page-header-bottom: 32px;
+  --page-description-gap: 16px;
+  --page-copy-size: 16px;
+  --section-title-size: 32px;
+  --section-gap: 64px;
+  --card-gap: 40px;
+}
+body:not([data-page=admin]) h1.public-title {
+  font-size: var(--page-title-size);
+  font-weight: var(--page-title-weight);
+  line-height: var(--page-title-leading);
+  letter-spacing: var(--page-title-tracking);
+}
+.public-section-title {
+  font-size: var(--section-title-size);
+  line-height: 1.3;
+  font-weight: 550;
+  letter-spacing: -.02em;
+}
+body:not([data-page=admin]) .site-header {border-bottom:0}
+body:not([data-page=admin]) .site-footer {margin-top:var(--section-gap);padding-block:28px}
+body:not([data-page=admin]) .page-heading {margin:var(--page-header-top) 0 var(--page-header-bottom)}
+body:not([data-page=admin]) .breadcrumb {margin:var(--page-header-top) 0 var(--page-header-bottom);font-size:14px}
+body:not([data-page=admin]) .photo-detail {padding-top:0}
+body:not([data-page=admin]) .photo-detail h1 {font-size:var(--page-title-size);font-weight:var(--page-title-weight);line-height:var(--page-title-leading);letter-spacing:var(--page-title-tracking);margin-bottom:var(--page-description-gap)}
+@media(max-width:700px){
+  :root {
+    --page-title-size: 36px;
+    --page-header-top: 24px;
+    --page-header-bottom: 24px;
+    --page-description-gap: 12px;
+    --page-copy-size: 15px;
+    --section-title-size: 26px;
+    --section-gap: 40px;
+    --card-gap: 32px;
+  }
+}
+@media(max-width:700px){body:not([data-page=admin]) .site-header.glass{padding:14px 0 8px;gap:8px}}
+
+/* A single mobile breakpoint keeps the navigation on its own row, including landscape phones. */
+@media(max-width:700px){
+ body:not([data-page=admin]) .site-header{flex-wrap:wrap}
+ body:not([data-page=admin]) .site-header nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px}
+ body:not([data-page=admin]) .site-header>.icon-button{width:44px;height:44px}
+ body:not([data-page=admin]) input[type=search],body:not([data-page=admin]) select{font-size:16px}
+}
+
+/* Keep controls reachable while the image and its EXIF scroll inside the dialog. */
+html.viewer-open,html.viewer-open body{overflow:hidden}
+.photo-viewer{padding:0;max-height:94dvh;overflow-y:auto;overscroll-behavior:contain}
+.viewer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:3;padding:8px 16px;background:var(--surface)}
+.viewer-toolbar .viewer-actions{margin:0;gap:8px;flex-wrap:wrap}
+.viewer-toolbar .viewer-close{position:static;flex-shrink:0}
+.viewer-grid{padding:12px 30px 30px;min-width:0}
+.viewer-media{min-width:0}
+.viewer-image-wrap img{display:block;height:auto}
+.viewer-load{min-height:28px;font-size:13px;color:var(--muted);padding-top:8px}
+.viewer-load .button{margin-top:10px}
+.viewer-actions button:disabled{opacity:.4;cursor:default}
+.public-load-error{display:flex;flex-direction:column;align-items:flex-start;gap:16px}
+@media(max-width:700px){
+ .viewer-toolbar{padding:8px 12px}.viewer-grid{padding:8px 16px 24px}
+ .viewer-grid aside{padding:0}.viewer-image-wrap img{max-height:62dvh}
+ .viewer-grid aside h2{overflow-wrap:anywhere}
+}
+
+.photo-card figure,.journey-photo figure,.album-card,.journal-empty-work figure,#about-work>a,.atlas-work figure,.atlas-context>a{position:relative}
+.preview-retry{position:absolute;z-index:4;top:8px;right:8px;margin:0;max-width:calc(100% - 16px);min-height:44px;padding:8px 12px;border:0;background:var(--surface);color:var(--blue);font-size:12px;line-height:1.4;cursor:pointer}

@@ -1,0 +1,3 @@
+<view class="state glass" wx:if="{{loading}}"><view class="skeleton"><view class="skeleton-line"/><view class="skeleton-line medium"/><view class="skeleton-line short"/></view><text>正在加载…</text></view>
+<view class="state glass" wx:elif="{{error}}"><text>{{error}}</text><button class="retry" bindtap="retry">重新加载</button></view>
+<view class="state glass" wx:elif="{{empty}}"><text>{{empty}}</text></view>

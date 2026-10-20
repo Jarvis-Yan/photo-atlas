@@ -1,0 +1,12 @@
+.waterfall-controls{display:flex;justify-content:space-between;align-items:center;gap:20rpx;margin:0 0 24rpx;color:var(--muted);font-size:21rpx}.motion-switch{margin:0;padding:12rpx 20rpx;min-height:64rpx;line-height:1.5;background:transparent;color:var(--text);border:1rpx solid var(--border);border-radius:6rpx;font-size:23rpx}.motion-switch::after{border:0}.waterfall-stage{display:flex;gap:20rpx;align-items:flex-start}.waterfall-column{flex:1;min-width:0;overflow:hidden}.waterfall-item{padding-bottom:28rpx}.flow{height:1050rpx;overflow:hidden}.flow .waterfall-column{height:100%}.flow .waterfall-track{animation:conveyor var(--duration) linear infinite;animation-play-state:paused}.flow.running .waterfall-track{animation-play-state:running;will-change:transform}.free .waterfall-track{transform:none}.mirror{pointer-events:auto}@keyframes conveyor{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,var(--travel),0)}}
+@media(prefers-reduced-motion:reduce){.flow{height:auto;overflow:visible}.flow .waterfall-column{height:auto}.flow .waterfall-track{animation:none!important;transform:none!important;will-change:auto!important}.mirror{display:none}}
+
+.flow .waterfall-column{touch-action:pan-x}.waterfall-position{will-change:auto}.flow.running .waterfall-position{will-change:transform}@media(prefers-reduced-motion:reduce){.waterfall-position{transform:none!important;will-change:auto!important}}
+
+.photo-wall{position:relative}.wall-photo{position:absolute;min-width:0}
+
+.home-tile{overflow:hidden;border-radius:20rpx;background:var(--soft)}
+.home-caption{position:absolute;left:0;right:0;bottom:0;padding:48rpx 18rpx 16rpx;background:linear-gradient(transparent,rgba(9,25,42,.84));color:#fff;font-size:24rpx;line-height:1.4;pointer-events:none}
+
+.home-tile.flip-tile{overflow:visible;background:transparent;transition:top 350ms cubic-bezier(.22,1,.36,1)}
+@media(prefers-reduced-motion:reduce){.home-tile.flip-tile{transition:none}}

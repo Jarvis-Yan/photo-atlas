@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "相册",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "loading-state": "/components/loading-state/index",
+    "progressive-image": "/components/progressive-image/index"
+  }
+}

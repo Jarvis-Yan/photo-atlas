@@ -1,0 +1,22 @@
+<view class="featured-cover" wx:if="{{slides.length}}">
+  <view class="featured-frame">
+    <swiper class="featured-swiper" current="{{position}}" autoplay="{{running}}" interval="5000" duration="500" circular="{{slides.length>1}}" previous-margin="{{slides.length>1?'56rpx':'0rpx'}}" next-margin="{{slides.length>1?'56rpx':'0rpx'}}" indicator-dots="{{false}}" skip-hidden-item-layout="{{true}}" bindchange="change" bindanimationfinish="finish" bindtouchstart="start" bindtouchmove="move" bindtouchend="end" bindtouchcancel="end">
+      <swiper-item wx:for="{{slides}}" wx:for-index="slideIndex" wx:key="id">
+        <view class="featured-slide" data-index="{{slideIndex}}" bindtap="open">
+          <view class="featured-card {{item.side}}" style="width:{{item.width}}rpx">
+            <progressive-image wx:if="{{item.render}}" photo="{{photos[slideIndex]}}" height="{{item.height+'rpx'}}" background="#15243a" clear-size="960" priority active="{{active && item.render}}" upgrade="{{slideIndex===index}}"/>
+            <view class="featured-caption"><text class="featured-title">{{item.title}}</text></view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+  <view class="featured-controls">
+    <text class="featured-hint">滑动浏览 · 点击查看</text>
+    <view class="featured-navigation">
+      <button wx:if="{{slides.length>1}}" class="featured-arrow" aria-label="上一张每日精选" catchtap="previous">←</button>
+      <text class="featured-count">{{counter}}</text>
+      <button wx:if="{{slides.length>1}}" class="featured-arrow" aria-label="下一张每日精选" catchtap="next">→</button>
+    </view>
+  </view>
+</view>

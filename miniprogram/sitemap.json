@@ -1,0 +1,4 @@
+{
+  "desc": "PixelCore public pages",
+  "rules": [{"action": "allow", "page": "*"}]
+}

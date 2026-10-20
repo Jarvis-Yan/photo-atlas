@@ -1,0 +1,4 @@
+<view class="progressive-frame" style="height:{{height}};background:{{background}}" aria-label="{{photo.alt || photo.title}}">
+ <image wx:for="{{frames}}" wx:key="key" class="progressive-layer {{item.ready?'ready':''}}" src="{{item.src}}" data-key="{{item.key}}" bindload="frameLoaded" binderror="frameFailed" mode="aspectFit" webp show-menu-by-longpress="{{interactive}}"/>
+ <button wx:if="{{retryLabel}}" class="progressive-retry" catchtap="retry">{{retryLabel}}</button>
+</view>

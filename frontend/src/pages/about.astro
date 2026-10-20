@@ -1,0 +1,18 @@
+---
+import Site from '../layouts/Site.astro';
+import '../styles/collections.css';
+---
+<Site page="about">
+  <section class="about-hero" aria-labelledby="about-title">
+    <div class="about-copy">
+      <h1 id="about-title" class="public-title">关于 PixelCore</h1>
+      <p id="about-text" class="about-intro">正在加载介绍…</p>
+      <div class="about-actions"><a class="button" href="/albums/">浏览相册 ↗</a><a href="/footprints/">查看摄影足迹 →</a></div>
+    </div>
+    <figure id="about-work" class="about-work" hidden></figure>
+  </section>
+  <div class="about-details">
+    <section aria-labelledby="about-subjects-title"><h2 id="about-subjects-title">镜头里的主题</h2><p>旅行中的风景，身边的街巷，以及不同光线里的日常。</p><ul class="about-subjects"><li><a href="/footprints/?category=自然">自然</a></li><li><a href="/footprints/?category=城市">城市</a></li><li><a href="/footprints/?category=人像">人像</a></li><li><a href="/footprints/?category=星空">星空</a></li></ul></section>
+    <section id="about-contact" aria-labelledby="about-contact-title" hidden><h2 id="about-contact-title">联系我</h2><p>关于作品与拍摄，可以通过以下方式联系。</p><div id="contact-text" class="about-contact-value"></div></section>
+  </div>
+</Site>

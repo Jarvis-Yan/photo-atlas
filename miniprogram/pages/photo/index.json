@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "作品",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "progressive-image": "/components/progressive-image/index"
+  }
+}

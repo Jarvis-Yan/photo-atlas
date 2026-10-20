@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/footprints/index",
+    "pages/albums/index",
+    "pages/journal/index",
+    "pages/about/index",
+    "pages/photo/index",
+    "pages/album-detail/index",
+    "pages/post/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#f3f6fb",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "PixelCore",
+    "backgroundColor": "#f3f6fb",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#52647a",
+    "selectedColor": "#286b9a",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "作品"
+      },
+      {
+        "pagePath": "pages/footprints/index",
+        "text": "足迹"
+      },
+      {
+        "pagePath": "pages/albums/index",
+        "text": "相册"
+      },
+      {
+        "pagePath": "pages/journal/index",
+        "text": "随笔"
+      },
+      {
+        "pagePath": "pages/about/index",
+        "text": "关于"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 30000,
+    "downloadFile": 120000
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

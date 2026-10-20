@@ -1,0 +1,93 @@
+---
+import Site from '../layouts/Site.astro';
+import '../styles/home.css';
+import '../styles/masonry.css';
+import '../styles/photo-flip.css';
+---
+<Site page="home">
+  <section class="folio-hero" aria-labelledby="home-title">
+    <div class="folio-intro">
+      <h1 id="home-title" class="public-title" data-site-title>摄影与旅行记录</h1>
+      <p class="folio-description" data-site-description>风景、街巷，以及拍摄时的随笔。</p>
+    </div>
+    <div class="folio-media" id="featured-cover" role="region" aria-roledescription="轮播" aria-label="每日精选作品">
+      <div class="cover-image">
+        <a class="folio-cover hero-carousel" id="folio-cover" href="#collection" aria-label="浏览今日精选">
+          <div class="cover-loading" aria-hidden="true"></div>
+          <div class="folio-cover-caption"><span id="cover-title">今日影像</span></div>
+        </a>
+        <div class="cover-actions">
+          <button type="button" data-cover-prev aria-label="上一张每日精选">←</button>
+          <button type="button" data-cover-next aria-label="下一张每日精选">→</button>
+        </div>
+      </div>
+      <div class="cover-controls"><span class="cover-count" data-cover-count aria-label="当前作品序号">— / —</span></div>
+    </div>
+    <div class="hero-actions">
+      <a class="button primary" href="#collection">探索作品 <span aria-hidden="true">↘</span></a>
+      <a class="hero-map-link" href="/footprints/">浏览摄影足迹 <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <div id="collection" class="section-heading collection-heading">
+    <div>
+      <div class="collection-title-row"><h2 id="collection-title" class="public-section-title">作品</h2><span id="edition-date"></span></div>
+      <p id="collection-description" hidden></p>
+    </div>
+    <div class="collection-tools">
+      <details id="photo-search-panel" class="collection-tool">
+        <summary>搜索</summary>
+        <div class="collection-popover">
+          <label class="search-label"><span>搜索作品</span><input id="photo-search" type="search" maxlength="240" placeholder="标题、地点或标签"/></label>
+          <button id="photo-search-clear" type="button" class="text-button">清除搜索</button>
+        </div>
+      </details>
+      <details class="collection-tool" id="gallery-options">
+        <summary>浏览</summary>
+        <div class="collection-popover" id="gallery-controls"></div>
+      </details>
+    </div>
+  </div>
+  <div class="collection-scope-row">
+    <div class="collection-scope" role="group" aria-label="作品范围">
+      <button type="button" data-collection-mode="daily" aria-pressed="true" aria-controls="collection-results">今日精选</button>
+      <button type="button" data-collection-mode="all" aria-pressed="false" aria-controls="collection-results">全部作品</button>
+    </div>
+    <p id="collection-status" class="collection-status" role="status" aria-live="polite">正在加载作品…</p>
+  </div>
+  <nav class="category-filter" aria-label="作品题材">
+    <button type="button" class="button active" data-category="" aria-pressed="true">全部题材</button>
+    <button type="button" class="button" data-category="人像" aria-pressed="false">人像</button>
+    <button type="button" class="button" data-category="自然" aria-pressed="false">自然</button>
+    <button type="button" class="button" data-category="城市" aria-pressed="false">城市</button>
+    <button type="button" class="button" data-category="星空" aria-pressed="false">星空</button>
+  </nav>
+  <div id="collection-results" aria-busy="true">
+    <div id="photo-grid" class="photo-grid" role="region" aria-labelledby="collection-title" aria-describedby="collection-status"></div>
+    <div id="collection-empty" class="collection-no-results" hidden>
+      <p id="collection-empty-message"></p>
+      <div><button type="button" id="collection-empty-all" class="button">查看全部作品</button><button type="button" id="collection-reset" class="text-button">清除筛选</button></div>
+    </div>
+    <div id="collection-error" class="collection-error" hidden><p id="collection-error-message"></p><button type="button" id="collection-retry" class="text-button">重新加载作品</button></div>
+    <section id="collection-bridge" class="collection-bridge" aria-label="继续浏览作品" hidden>
+      <div class="bridge-meta" aria-hidden="true"><span>浏览进度</span><span id="bridge-count"></span></div>
+      <div class="bridge-center" aria-hidden="true">
+        <div class="bridge-title"><span class="bridge-title-idle">下一组作品</span><span class="bridge-title-loading">正在展开</span></div>
+        <span class="bridge-track"><span></span></span>
+      </div>
+      <div class="bridge-mark" aria-hidden="true"><span class="bridge-orbit"></span><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m-5-5 5 5 5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div id="collection-load-status" class="collection-load-status" role="status" aria-live="polite" hidden></div>
+    </section>
+  </div>
+  <section id="home-journey" class="home-journey" aria-labelledby="journey-title" hidden>
+    <div class="journey-heading">
+      <div><h2 id="journey-title"></h2><p id="journey-date"></p></div>
+      <a id="journey-link" href="/footprints/">查看这段足迹 <span aria-hidden="true">↗</span></a>
+    </div>
+    <div id="journey-photos" class="journey-photos"></div>
+    <a class="journey-all" href="/footprints/">沿着地图，浏览全部足迹 <span aria-hidden="true">→</span></a>
+  </section>
+  <section id="latest-journal" class="journal-preview" hidden>
+    <div class="section-heading"><h2>拍摄随笔</h2><a href="/journal/">全部随笔 →</a></div>
+    <div id="journal-preview-list" class="post-grid"></div>
+  </section>
+</Site>

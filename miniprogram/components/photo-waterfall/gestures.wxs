@@ -1,0 +1,33 @@
+function now(){return getDate().getTime();}
+function track(owner,key){return owner.selectComponent('.track-'+key);}
+function position(owner,key){return owner.selectComponent('.position-'+key);}
+function column(owner,key){return owner.selectComponent('.column-'+key);}
+function changed(config,old,owner,instance){
+ var state=instance.getState();var parts=config.split(':');
+ state.key=parts[0];state.height=parts[1]*1;state.scale=parts[2]*1;state.flow=parts[3]=='true';state.running=parts[4]=='true';
+ if(state.version!=parts[5]||!state.flow){state.offset=0;state.dragging=false;state.moved=false;state.version=parts[5];position(owner,state.key).setStyle({'transform':'translate3d(0,0,0)'});}
+ track(owner,state.key).setStyle({'animation-play-state':state.running&&!state.dragging?'running':'paused'});
+}
+function start(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow)return;
+ state.startY=event.touches[0].clientY;state.lastY=state.startY;state.dragging=true;state.moved=false;
+ track(owner,key).setStyle({'animation-play-state':'paused'});
+}
+function move(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow||!state.dragging||!event.touches.length)return;
+ var y=event.touches[0].clientY;if(!state.moved&&Math.abs(y-state.startY)<6)return;
+ state.moved=true;state.offset=(((state.offset||0)-(y-state.lastY)*state.scale)%state.height+state.height)%state.height;state.lastY=y;
+ position(owner,key).setStyle({'transform':'translate3d(0,-'+state.offset+'rpx,0)'});
+ return false;
+}
+function end(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow)return;
+ state.dragging=false;if(state.moved)state.suppressUntil=now()+500;
+ track(owner,key).setStyle({'animation-play-state':state.running?'running':'paused'});
+}
+function tap(event,owner){
+ var data=event.currentTarget.dataset;var state=column(owner,data.key).getState();
+ if(state.dragging||now()<(state.suppressUntil||0))return false;
+ owner.callMethod('openById',{id:data.id});
+}
+module.exports={changed:changed,start:start,move:move,end:end,tap:tap};

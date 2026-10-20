@@ -1,0 +1,18 @@
+<view class="page atlas {{theme}}" style="height:{{windowHeight}}px">
+ <view class="atlas-fixed" style="height:{{fixedHeight}}px">
+  <view class="map-frame"><view class="map-surface" style="height:{{mapHeight}}px;background:var(--soft)"><map wx:if="{{mapMounted}}" id="footprints-map" class="map" style="height:100%" latitude="{{mapLatitude}}" longitude="{{mapLongitude}}" scale="{{mapScale}}" markers="{{markers}}" bindmarkertap="markerTap" binderror="mapFailed" bindregionchange="mapRegionChanged" enable-zoom enable-scroll/></view><view class="map-context" bindtap="retryMap"><text>{{mapTitle}}</text><text>{{mapError || (mapUpdating?'正在定位…':mapDescription)}}</text></view></view>
+  <view class="map-note">{{mapUnavailable?'当前地点坐标待补充 · 显示全部足迹':mapArea?'地点范围参考 · 不代表精确拍摄点':'公开位置已模糊化 · 拖动右侧刻度，停下后定位'}}</view>
+ </view>
+ <scroll-view class="timeline-scroll" scroll-y enhanced scroll-top="{{scrollTop}}" bindscroll="onScroll" bindscrollend="scheduleMap" style="height:{{storyHeight}}px" show-scrollbar="false">
+  <view class="story-content">
+  <view class="atlas-title"><text>摄影足迹</text><text>{{shown.length}} 张作品</text></view>
+   <view class="filters"><picker class="place-select" range="{{placeLabels}}" value="{{placeIndex}}" bindchange="choosePlace"><view>{{placeLabels[placeIndex]}}</view></picker><button class="text-button" bindtap="toggleAdvanced">筛选</button><input class="input" value="{{query}}" maxlength="240" placeholder="地点、标题或标签" bindinput="onSearch"/></view>
+   <view class="advanced" wx:if="{{advanced}}"><picker range="{{categories}}" value="{{categoryIndex}}" bindchange="chooseCategory"><view class="picker">题材 · {{categories[categoryIndex]}}</view></picker><view class="year-range" wx:if="{{maxYear>minYear}}"><text>开始 {{from}}</text><slider min="{{minYear}}" max="{{maxYear}}" value="{{from}}" bindchange="fromChange" activeColor="#286b9a"/><text>结束 {{to}}</text><slider min="{{minYear}}" max="{{maxYear}}" value="{{to}}" bindchange="toChange" activeColor="#286b9a"/></view><label><switch checked="{{includeUndated}}" bindchange="toggleUndated" color="#286b9a"/>包含日期待补充</label><button class="text-button" bindtap="reset">清除全部筛选</button></view>
+   <loading-state loading="{{loading}}" error="{{error}}" bind:retry="load"/>
+   <view class="calendar" id="{{item.anchor}}" wx:for="{{groups}}" wx:for-index="groupIndex" wx:key="key"><view class="calendar-heading"><text>{{item.title}}</text><text>{{item.count}} 张作品</text></view><view class="grid"><view class="timeline-photo full" wx:for="{{item.items}}" wx:for-item="photo" wx:for-index="photoIndex" wx:key="id" data-id="{{photo.id}}"><photo-flip photo="{{photo}}" height="{{630*photo.height/photo.width}}" auto-size upgrade="{{previewUpgrade}}" active="{{!loading}}" bind:resize="cardResize" bind:open="openPhoto"/></view></view></view>
+   <view class="empty" wx:if="{{!loading&&!error&&!groups.length}}">没有符合条件的作品。<button class="text-button" bindtap="reset">清除筛选</button></view>
+   <view aria-hidden="true" style="height:{{timelineTail}}px"/>
+  </view>
+ </scroll-view>
+ <view wx:if="{{groups.length>1}}" class="time-rail" style="top:{{railTop}}px;height:{{railHeight}}px" bindtap="tapSeek" catchtouchstart="startSeek" catchtouchmove="moveSeek" catchtouchend="endSeek" catchtouchcancel="endSeek" aria-label="按拍摄时间快速定位"><view wx:for="{{ticks}}" wx:key="id" class="time-tick {{item.active?'active':''}}" style="top:{{item.top}}%;width:{{item.width}}rpx;opacity:{{item.opacity}}"/></view><view wx:if="{{groups.length>1}}" class="time-current" style="top:{{railTop+timeOffset}}px"><text>{{timeLabel}}</text></view><button wx:if="{{groups.length>1}}" class="time-label" style="top:{{railTop+railHeight}}px" bindtap="top" aria-label="回到全部足迹">顶部 ↑</button>
+</view>

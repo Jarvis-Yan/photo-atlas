@@ -1,0 +1,7 @@
+<view class="photo-card {{compact?'compact':''}}" bindtap="open" hover-class="pressed" role="button" aria-label="查看作品 {{photo.title}}">
+  <progressive-image class="photo-image" photo="{{photo}}" height="{{(compact?photo.cardHeight:photo.fullCardHeight)+'rpx'}}" style="height:{{compact?photo.cardHeight:photo.fullCardHeight}}rpx" clear-size="{{compact?960:1600}}" priority="{{priority}}" active="{{active}}" interactive="{{interactive}}"/>
+  <view class="photo-copy">
+    <text class="photo-title">{{photo.title}}</text>
+    <text class="photo-tags" wx:if="{{photo.tagText}}">{{photo.tagText}}</text>
+  </view>
+</view>

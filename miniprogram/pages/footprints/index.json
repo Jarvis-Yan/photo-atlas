@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "摄影足迹",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "loading-state": "/components/loading-state/index",
+    "progressive-image": "/components/progressive-image/index",
+    "photo-flip": "/components/photo-flip/index"
+  }
+}

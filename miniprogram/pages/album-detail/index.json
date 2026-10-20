@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "相册",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "photo-card": "/components/photo-card/index",
+    "loading-state": "/components/loading-state/index",
+    "photo-waterfall": "/components/photo-waterfall/index"
+  }
+}

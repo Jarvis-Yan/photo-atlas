@@ -1,0 +1,55 @@
+<wxs module="gesture">
+function now(){return getDate().getTime();}
+function track(owner,key){return owner.selectComponent('.track-'+key);}
+function position(owner,key){return owner.selectComponent('.position-'+key);}
+function column(owner,key){return owner.selectComponent('.column-'+key);}
+function changed(config,old,owner,instance){
+ var state=instance.getState();var parts=config.split(':');
+ state.key=parts[0];state.height=parts[1]*1;state.scale=parts[2]*1;state.flow=parts[3]=='true';state.running=parts[4]=='true';
+ if(state.version!=parts[5]||!state.flow){state.offset=0;state.dragging=false;state.moved=false;state.version=parts[5];position(owner,state.key).setStyle({'transform':'translate3d(0,0,0)'});}
+ track(owner,state.key).setStyle({'animation-play-state':state.running&&!state.dragging?'running':'paused'});
+}
+function start(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow)return;
+ state.startY=event.touches[0].clientY;state.lastY=state.startY;state.dragging=true;state.moved=false;
+ track(owner,key).setStyle({'animation-play-state':'paused'});
+}
+function move(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow||!state.dragging||!event.touches.length)return;
+ var y=event.touches[0].clientY;if(!state.moved&&Math.abs(y-state.startY)<6)return;
+ state.moved=true;state.offset=(((state.offset||0)-(y-state.lastY)*state.scale)%state.height+state.height)%state.height;state.lastY=y;
+ position(owner,key).setStyle({'transform':'translate3d(0,-'+state.offset+'rpx,0)'});
+ return false;
+}
+function end(event,owner){
+ var key=event.currentTarget.dataset.key;var state=column(owner,key).getState();if(!state.flow)return;
+ state.dragging=false;if(state.moved)state.suppressUntil=now()+500;
+ track(owner,key).setStyle({'animation-play-state':state.running?'running':'paused'});
+}
+function tap(event,owner){
+ var data=event.currentTarget.dataset;var state=column(owner,data.key).getState();
+ if(state.dragging||now()<(state.suppressUntil||0))return false;
+ owner.callMethod('openById',{id:data.id});
+}
+module.exports={changed:changed,start:start,move:move,end:end,tap:tap};
+</wxs>
+<view class="gallery-observer">
+<view class="waterfall-controls" wx:if="{{showControls && photos.length}}"><text>{{flow&&eligible?'独立滑动一列 · 另一列继续流动':'自由浏览 · 完整构图'}}</text><button wx:if="{{eligible}}" class="motion-switch" bindtap="toggle" aria-label="{{flow&&eligible?'停止自动滚动，自由浏览全部作品':'开启自动滚动'}}">{{flow&&eligible?'自由浏览':'流动浏览'}}</button></view>
+<view wx:if="{{layoutMode!=='legacy'}}" class="photo-wall home-gallery" style="height:{{wallHeight}}rpx">
+ <view class="wall-photo home-tile {{flip?'flip-tile':''}}" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx;height:{{item.cardHeight}}rpx">
+  <photo-flip wx:if="{{flip}}" photo="{{item.photo}}" height="{{item.cardHeight}}" active="{{active}}" bind:resize="flipResize" bind:open="flipOpen"/>
+  <view wx:else data-id="{{item.id}}" bindtap="openRow" aria-role="button" aria-label="{{item.photo.title}}"><progressive-image photo="{{item.photo}}" height="{{item.cardHeight+'rpx'}}" clear-size="960" active="{{active}}"/><view class="home-caption">{{item.photo.title}}</view></view>
+ </view>
+</view>
+<view wx:elif="{{flow&&eligible}}" class="waterfall-stage {{flow&&eligible?'flow':'free'}} {{running?'running':''}}">
+  <view class="waterfall-column column-{{column.key}}" wx:for="{{columns}}" wx:for-item="column" wx:key="key" data-key="{{column.key}}" configuration="{{column.key+':'+column.height+':'+scale+':'+(flow&&eligible)+':'+running+':'+revision}}" change:configuration="{{gesture.changed}}" bindtouchstart="{{gesture.start}}" bindtouchmove="{{gesture.move}}" bindtouchend="{{gesture.end}}" bindtouchcancel="{{gesture.end}}">
+    <view class="waterfall-position position-{{column.key}}"><view class="waterfall-track track-{{column.key}}" style="--travel:-{{column.height}}rpx;--duration:{{column.duration}}s;animation-direction:{{column.direction}};">
+      <view class="waterfall-cycle"><view class="waterfall-item" wx:for="{{column.photos}}" wx:key="id" data-key="{{column.key}}" data-id="{{item.id}}" bindtap="{{gesture.tap}}"><photo-card active="{{active}}" photo="{{item}}" compact priority="{{(flow&&eligible)||index<2}}" interactive="{{false}}"/></view></view>
+      <view class="waterfall-cycle mirror" wx:if="{{flow&&eligible}}" aria-hidden="true"><view class="waterfall-item" wx:for="{{column.photos}}" wx:key="id" data-key="{{column.key}}" data-id="{{item.id}}" bindtap="{{gesture.tap}}"><photo-card active="{{active}}" photo="{{item}}" compact priority interactive="{{false}}"/></view></view>
+      <view class="waterfall-cycle mirror" wx:if="{{flow&&eligible}}" aria-hidden="true"><view class="waterfall-item" wx:for="{{column.photos}}" wx:key="id" data-key="{{column.key}}" data-id="{{item.id}}" bindtap="{{gesture.tap}}"><photo-card active="{{active}}" photo="{{item}}" compact priority interactive="{{false}}"/></view></view>
+    </view></view>
+  </view>
+</view>
+
+<view wx:else class="photo-wall" style="height:{{wallHeight}}rpx"><view class="wall-photo" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx" data-id="{{item.id}}" bindtap="openRow"><photo-card photo="{{item}}" active="{{active}}" compact interactive="{{false}}"/></view></view>
+</view>

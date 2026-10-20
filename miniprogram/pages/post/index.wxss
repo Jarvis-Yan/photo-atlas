@@ -1,0 +1,1 @@
+.article{padding:38rpx 34rpx;overflow:hidden}.title{font-size:44rpx;font-weight:650;line-height:1.35}.date{color:var(--muted);font-size:22rpx;margin:16rpx 0 34rpx}.rich{font-size:29rpx;line-height:1.8;color:var(--text);word-break:break-word}.share{margin-top:36rpx}

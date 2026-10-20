@@ -1,0 +1,16 @@
+<view class="photo-flip {{flipped?'is-flipped':''}} {{turning?'is-turning':''}}" hover-class="is-lit" hover-start-time="0" hover-stay-time="180" style="height:{{height}}rpx" bindtap="flip" aria-role="button" aria-label="{{flipped?'翻回照片':'查看作品信息'}} {{photo.title}}">
+ <view class="flip-turn">
+  <view class="flip-front" aria-hidden="{{flipped}}"><progressive-image photo="{{photo}}" height="{{height+'rpx'}}" clear-size="1600" active="{{active}}" upgrade="{{upgrade}}" bind:qualitychange="quality"/></view>
+  <view class="flip-back" aria-hidden="{{!flipped}}">
+   <image wx:if="{{backgroundSrc}}" class="flip-background" src="{{backgroundSrc}}" mode="aspectFill" aria-hidden="true"/>
+   <view class="flip-shade"/><view class="flip-light"/>
+   <view class="flip-copy">
+    <view class="flip-title">{{photo.title}}</view>
+    <view class="flip-meta" wx:if="{{photo.locationText}}">{{photo.locationText}}</view>
+    <view class="flip-caption" wx:if="{{photo.caption}}">{{photo.caption}}</view>
+    <view class="flip-tags" wx:if="{{photo.tagText}}">{{photo.tagText}}</view>
+    <view class="flip-actions"><button class="flip-glass" catchtap="preview" hover-class="glass-pressed" hover-start-time="0" hover-stay-time="160" aria-label="查看 {{photo.title}} 大图">查看大图 ↗</button><button wx:if="{{photo.download}}" class="flip-glass {{saving?'is-saving':''}}" catchtap="save" loading="{{saving}}" disabled="{{saving}}" hover-class="glass-pressed" hover-start-time="0" hover-stay-time="160" aria-label="保存原尺寸带水印 JPEG">{{saving?'正在保存':'保存原图 ↓'}}</button></view>
+   </view>
+  </view>
+ </view>
+</view>

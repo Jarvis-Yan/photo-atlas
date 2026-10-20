@@ -1,0 +1,1 @@
+export function photoWall(photos:{width:number;height:number}[],width:number,gap?:number,caption?:number,seed?:number,options?:{targetFraction?:number;minWidth?:number;minHeight?:number}):{height:number;items:{index:number;x:number;y:number;width:number;height:number}[]};

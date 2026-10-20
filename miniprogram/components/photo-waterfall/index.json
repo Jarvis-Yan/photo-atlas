@@ -1,0 +1,1 @@
+{"component": true, "usingComponents": {"photo-card": "/components/photo-card/index", "progressive-image": "/components/progressive-image/index", "photo-flip": "/components/photo-flip/index"}}

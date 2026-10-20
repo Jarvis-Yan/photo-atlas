@@ -16,7 +16,7 @@
   "devDependencies": {
     "typescript": "^5.9.0"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN ../THIRD_PARTY_NOTICES.md",
   "engines": {
     "node": ">=22.12.0"
   }

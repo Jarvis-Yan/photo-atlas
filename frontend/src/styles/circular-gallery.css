@@ -1,0 +1,122 @@
+/* React Bits adaptation — Copyright (c) 2026 David Haz.
+ * MIT + Commons Clause; see third_party/react-bits/LICENSE.md and THIRD_PARTY_NOTICES.md.
+ */
+.circular-gallery {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.circular-gallery[data-pointer] {
+  cursor: pointer;
+}
+
+.circular-gallery[data-dragging] {
+  cursor: grabbing;
+}
+
+.circular-gallery-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.circular-gallery-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.circular-gallery-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.circular-gallery-caption {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(90%, 36rem);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.circular-gallery-caption-text {
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.65;
+}
+
+.circular-gallery-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.circular-gallery-close[data-visible] {
+  opacity: 0.8;
+  pointer-events: auto;
+}
+
+.circular-gallery-close:hover {
+  opacity: 1;
+}
+
+.circular-gallery-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.circular-gallery-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Only replace the image surface; home.css owns the original hero composition. */
+.circular-gallery{height:auto;aspect-ratio:3 / 2}
+.circular-gallery[hidden],.circular-nav[hidden],.cover-image[hidden],.cover-controls[hidden]{display:none!important}
+.circular-gallery-label{overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.circular-nav{display:flex;align-items:center;justify-content:space-between;gap:20px;color:#b3c2d7;font-size:12px}
+.circular-nav>div{flex-shrink:0;display:flex;align-items:center;gap:16px}
+.circular-nav button{width:44px;height:44px;min-height:44px;border:1px solid #b3c2d740;background:transparent;border-radius:50%;color:#edf1f7;font-size:20px;cursor:pointer}
+.circular-nav button:hover{background:#edf1f714;border-color:#b3c2d7}
+.circular-nav button:focus-visible{outline:2px solid #b5e4fa;outline-offset:3px}
+[data-circular-count]{min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+@media(max-width:700px){
+ .circular-gallery{aspect-ratio:4 / 3}
+ .circular-nav{gap:8px;margin-bottom:8px}
+ .circular-nav>div{gap:8px}
+ .circular-hint{font-size:11px}
+}

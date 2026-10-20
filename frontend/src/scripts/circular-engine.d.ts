@@ -1,0 +1,2 @@
+export type CircularItem={image:string;clear:string;fallback:string;aspect:number;text:string;alt:string};
+export function mountCircularGallery(options:{container:HTMLElement;canvas:HTMLCanvasElement;labelLayer:HTMLElement;caption:HTMLElement;buttons:HTMLButtonElement[];settings:{items:CircularItem[];[key:string]:unknown};onActive:(index:number)=>void}):{step:(delta:number)=>void;focus:(index:number)=>void;destroy:()=>void}|undefined;

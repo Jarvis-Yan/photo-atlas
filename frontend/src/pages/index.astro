@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import '../styles/home.css';
+import '../styles/circular-gallery.css';
 import '../styles/masonry.css';
 import '../styles/photo-flip.css';
 ---
@@ -11,6 +12,16 @@ import '../styles/photo-flip.css';
       <p class="folio-description" data-site-description>风景、街巷，以及拍摄时的随笔。</p>
     </div>
     <div class="folio-media" id="featured-cover" role="region" aria-roledescription="轮播" aria-label="每日精选作品">
+      <div class="circular-gallery" hidden aria-label="环形每日精选" aria-roledescription="环形画廊">
+        <canvas class="circular-gallery-canvas" aria-hidden="true"></canvas>
+        <div class="circular-gallery-labels" aria-hidden="true"></div>
+        <div class="circular-gallery-caption" aria-hidden="true"></div>
+        <ul class="circular-gallery-hidden" data-gallery-list></ul>
+      </div>
+      <div class="circular-nav" hidden>
+        <span class="circular-hint">拖动浏览 · 点击查看</span>
+        <div><button type="button" data-circular-prev aria-label="上一张环形精选">←</button><span data-circular-count aria-live="polite">— / —</span><button type="button" data-circular-next aria-label="下一张环形精选">→</button></div>
+      </div>
       <div class="cover-image">
         <a class="folio-cover hero-carousel" id="folio-cover" href="#collection" aria-label="浏览今日精选">
           <div class="cover-loading" aria-hidden="true"></div>

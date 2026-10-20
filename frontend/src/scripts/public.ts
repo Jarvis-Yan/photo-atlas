@@ -7,7 +7,7 @@ import {api,escaped,notice,errorText,initTheme,type Photo,type Album,type Post,t
 import {PhotoConveyor} from './conveyor';
 import {PhotoMasonry} from './photo-masonry';
 import {collectionAutoLoad} from './collection-scroll';
-import {featuredCover} from './featured-cover';
+import {circularFeatured} from './circular-featured';
 import {homeJourney} from './home-journey';
 import {viewerImage} from './viewer-image';
 import {publicNavigation} from './public-navigation';
@@ -72,7 +72,7 @@ async function start(){
   if(page==='home'){
    const grid=document.getElementById('photo-grid')!;
    const cover=document.getElementById('featured-cover');
-   if(cover)featuredCover(cover,catalog.photos,index=>openViewer(index,catalog.photos));
+   if(cover)circularFeatured(cover,catalog.photos,index=>openViewer(index,catalog.photos));
    const initial=collectionFilter(new URLSearchParams(location.search));
    const search=document.getElementById('photo-search') as HTMLInputElement;search.value=initial.query;
    const more=document.getElementById('collection-load-status')!;

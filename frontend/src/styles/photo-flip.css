@@ -1,14 +1,84 @@
-.photo-flip{position:relative;width:100%;height:100%;touch-action:pan-y}
-.photo-flip .flip-front{display:block;width:100%;height:100%;padding:0;border:0;border-radius:10px;overflow:hidden;background:var(--soft);cursor:pointer}
-.photo-flip .flip-front figure{width:100%;height:100%;margin:0}
-.photo-flip .flip-front img{display:block;width:100%;height:100%;object-fit:contain}
-.photo-flip .flip-back{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--surface,#f2f5f8);color:var(--text,#172d41);border:1px solid var(--line,rgba(100,120,140,.25));border-radius:10px;overflow:auto}
-.photo-flip .flip-back[hidden]{display:none}
-.detail-close{position:sticky;top:0;align-self:flex-end;min-width:40px;min-height:40px;border:1px solid currentColor;border-radius:50%;background:var(--surface,#f2f5f8);color:inherit;cursor:pointer;font-size:24px}
-.flip-copy h3{margin:0 0 12px;font-size:clamp(18px,2vw,28px);line-height:1.3;overflow-wrap:anywhere}
-.flip-copy p{line-height:1.65;overflow-wrap:anywhere}.flip-description{white-space:pre-line}
-.flip-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
-.flip-view{padding:10px 14px;border:1px solid var(--line,rgba(100,120,140,.3));border-radius:20px;color:inherit;background:var(--soft,#e5ebf1);text-decoration:none;cursor:pointer;font:inherit}
-.flip-view:focus-visible,.detail-close:focus-visible,.flip-front:focus-visible{outline:3px solid #498dc4;outline-offset:-3px}
-.flip-exif{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px;margin:20px 0 0}.flip-exif dt{font-size:14px;opacity:.75}.flip-exif dd{margin:4px 0 0;overflow-wrap:anywhere}
-.atlas-flip-slot{position:relative;width:100%}.atlas-work .photo-flip{position:absolute;inset:0}.atlas-work.atlas-work-full{grid-column:1/-1}
+/* React Bits adaptation — Copyright (c) 2026 David Haz.
+ * MIT + Commons Clause; see third_party/react-bits/LICENSE.md and THIRD_PARTY_NOTICES.md.
+ */
+.photo-flip{position:relative;width:100%;height:100%;perspective:1100px;touch-action:pan-y;--flip-turn:0deg;--flip-x:0deg;--flip-y:0deg}
+.flip-rotor{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--flip-x)) rotateY(calc(var(--flip-turn) + var(--flip-y)));transition:transform .52s cubic-bezier(.22,.7,.2,1)}
+.photo-flip.is-turning .flip-rotor{transition:none}
+.photo-flip .flip-face,.photo-grid.masonry .photo-card.flip-front{position:absolute;inset:0;width:100%;height:100%;margin:0;border:0;border-radius:10px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.photo-grid.masonry .photo-card.flip-front{padding:0;transform:none;cursor:pointer;background:var(--soft);box-shadow:none}
+.photo-grid.masonry .flip-front figure{margin:0}
+.flip-front:focus-visible,.flip-actions button:focus-visible{outline:3px solid #88bbdf;outline-offset:-4px}
+.flip-back{transform:rotateY(180deg);background:#17283c;color:#eef3fa;display:flex;flex-direction:column;padding:clamp(12px,2vw,26px);gap:12px;box-shadow:0 8px 24px #07192b20}
+.flip-copy{flex:0 0 auto;overflow:visible}
+.flip-copy h3{font-size:clamp(15px,1.5vw,23px);line-height:1.35;font-weight:600;overflow-wrap:anywhere}
+.flip-copy p{font-size:12px;line-height:1.65;color:#bac9db;margin-top:8px;overflow-wrap:anywhere}
+.flip-copy .flip-description{color:#e0e7ef}
+.flip-copy .flip-tags{font-size:11px;color:#99afc7}
+.flip-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;margin-top:auto}
+.flip-actions button{border:0;min-height:36px;padding:7px 10px;border-radius:4px;font-size:12px;line-height:1.4}
+.flip-view{background:#eaf1f9;color:#17283c}
+.flip-glare{position:absolute;inset:0;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),#ffffff22,transparent 65%);opacity:0;pointer-events:none;transition:opacity .2s}
+@media(hover:hover) and (pointer:fine){.photo-flip:hover .flip-glare{opacity:1}.photo-flip.is-turning{cursor:grabbing}}
+@media(max-width:700px){.flip-back{padding:10px;gap:6px}.flip-copy h3{font-size:14px}.flip-copy p{font-size:11px;margin-top:5px}.flip-actions{gap:2px}.flip-actions button{font-size:11px;padding:5px 6px;min-height:30px}}
+.photo-viewer.is-image-only{width:min(1600px,98vw);max-height:98dvh;border:0;background:#0d1928;color:white}
+.photo-viewer.is-image-only::backdrop{background:#07111bea}
+.photo-viewer.is-image-only .viewer-toolbar{background:transparent}
+.photo-viewer.is-image-only .viewer-close{color:#eaf1f9}
+.photo-viewer.is-image-only .viewer-actions button{background:#ffffff14;color:#eaf1f9}
+.photo-viewer.is-image-only .viewer-grid{display:block;padding:0 14px 12px}
+.photo-viewer.is-image-only .viewer-image-wrap{height:auto;min-height:180px}
+.photo-viewer.is-image-only .viewer-image-wrap img{width:100%;height:auto;max-height:calc(88dvh - 90px);object-fit:contain}
+.photo-viewer.is-image-only .viewer-load{min-height:0;padding:0;color:#bac9db}
+.photo-viewer.is-image-only .viewer-load:has([hidden]):not(:has(:not([hidden]))){display:none}
+@media(prefers-reduced-motion:reduce){.flip-rotor{transition:none;transform:none}.photo-flip .flip-face,.photo-grid.masonry .photo-card.flip-front{transform:none;backface-visibility:visible}.photo-flip[data-flipped=false] .flip-back,.photo-flip[data-flipped=true] .flip-front{visibility:hidden}.flip-glare{display:none}}
+.photo-flip{container-type:size}
+/* The rear uses the front image's decoded URL, mirrored under a frosted navy layer. */
+.flip-frost{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;background:#17283c}
+.photo-grid.masonry .flip-frost img{position:absolute;width:100%;height:100%;max-width:none;object-fit:cover;transform:scaleX(-1) scale(1.16);filter:blur(10px) brightness(.92) saturate(.9);border-radius:0}
+.flip-frost:after{content:'';position:absolute;inset:0;background:linear-gradient(145deg,#10273e45,#0b1b3080);box-shadow:inset 0 0 0 1px #e6f2ff24;border-radius:inherit}
+.flip-back .flip-copy,.flip-back .flip-actions{position:relative;z-index:1}
+.flip-copy h3{text-shadow:0 1px 8px #06142355}
+.flip-copy p,.flip-copy .flip-tags{color:#e0e9f4;text-shadow:0 1px 6px #06142366}
+
+.flip-back{cursor:pointer}.flip-back:focus-visible{outline:2px solid #c8e5fa;outline-offset:-3px}
+/* Readable type scales with the card itself, including narrow screens. */
+.flip-back{padding:clamp(18px,5cqw,30px);gap:14px}
+.flip-copy h3{font-size:clamp(20px,5.8cqw,30px);line-height:1.35}
+.flip-copy p,.flip-copy .flip-tags{font-size:clamp(16px,4cqw,21px);line-height:1.65;margin-top:10px}
+.flip-actions button{font-size:clamp(15px,3.6cqw,18px);line-height:1.4;min-height:44px;padding:10px 15px}
+/* GlassSurface-style refraction samples the processed rear surface; the label stays sharp. */
+.flip-actions .flip-view{position:relative;isolation:isolate;overflow:hidden;padding:11px 20px;border:1px solid #ecf7ff40;border-radius:24px;color:#fff;font-weight:550;background:#d5eaff12;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 1px 1px #ffffff55,inset 0 -1px 1px #cce8ff26,0 4px 12px #0714211a;text-shadow:0 1px 4px #061525;transition:transform .22s ease,box-shadow .22s ease}
+.flip-view .glass-refraction{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:inherit;opacity:.78}
+.flip-view .glass-label{position:relative;z-index:2;pointer-events:none}
+.flip-actions .flip-view:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;background:linear-gradient(135deg,#e6f5ff19,transparent 42%,transparent 65%,#e6f5ff0d);box-shadow:inset 0 0 2px 1px #eaf6ff38,inset 0 0 10px 2px #cceaff0a}
+.flip-actions .flip-view.has-refraction{background:#10233726;-webkit-backdrop-filter:none;backdrop-filter:none}
+@media(hover:hover) and (pointer:fine){.flip-actions .flip-view:hover{box-shadow:inset 0 1px 1px #ffffff80,inset 0 -1px 1px #cce8ff40,0 5px 14px #07142126}}
+.flip-actions .flip-view:active{transform:scale(.98)}
+.flip-actions .flip-view:focus-visible{outline:2px solid #dbf1ff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.flip-actions .flip-view{transition:none}.flip-actions .flip-view:active{transform:none}}
+
+.flip-back > .flip-glare{z-index:0}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.flip-actions .flip-view:hover:not(:active){transform:scale(1.035)}}
+
+.photo-flip[data-flipping=true] .flip-rotor,.photo-flip.is-turning .flip-rotor{will-change:transform}
+
+@media(hover:hover) and (pointer:fine){.photo-flip:hover .flip-rotor{will-change:transform}}
+
+.flip-exif{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px;margin:20px 0 0}.flip-exif div{min-width:0}.flip-exif dt{font-size:clamp(13px,3.4cqw,17px);color:#bfd0e2;line-height:1.5}.flip-exif dd{margin:3px 0 0;font-size:clamp(15px,4cqw,20px);line-height:1.55;overflow-wrap:anywhere}.flip-back .flip-copy .flip-description{white-space:pre-line}.photo-flip .flip-front{padding:0;background:var(--soft);cursor:pointer}.photo-flip .flip-front figure{margin:0}.photo-flip .flip-front img{width:100%;height:auto;display:block}.photo-flip .flip-frost img{position:absolute;width:100%;height:100%;max-width:none;object-fit:cover;transform:scaleX(-1) scale(1.16);filter:blur(10px) brightness(.92) saturate(.9)}
+.atlas-flip-slot{position:relative;width:100%}.atlas-work .photo-flip{position:absolute;inset:0}.atlas-work.atlas-work-full{grid-column:1/-1}.atlas-work .flip-back{padding:clamp(20px,5cqw,30px)}
+
+@media(max-width:700px){.atlas-work-grid{column-count:1}.atlas-work{margin-bottom:20px}}
+
+.flip-actions .flip-save{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font-size:clamp(15px,3.6cqw,18px);line-height:1.4;min-height:44px}.flip-actions .flip-save:focus-visible{outline:2px solid #dbf1ff;outline-offset:3px}
+
+/* Matched secondary actions without an extra caption row. */
+.flip-actions{gap:12px}.flip-actions .flip-view{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 20px;font-size:clamp(15px,3.6cqw,18px);line-height:1.4;white-space:nowrap}.flip-actions .flip-save{font-weight:550}
+
+.viewer-camera{max-width:1100px;margin:24px auto 0;padding:24px 12px 12px;border-top:1px solid #ffffff24}.viewer-camera .flip-exif{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:22px 28px;margin:0}.viewer-camera .flip-exif dt{font-size:13px;color:#aebfd2}.viewer-camera .flip-exif dd{font-size:16px;line-height:1.55;color:#e8eef7}@media(max-width:600px){.viewer-camera{padding:20px 4px}.viewer-camera .flip-exif{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.viewer-camera .flip-exif dd{font-size:15px}}
+
+/* Both faces share the photograph bounds; compact actions leave room for the copy. */
+.flip-back,.atlas-work .flip-back{padding:clamp(12px,3.5cqw,22px);gap:8px}
+.flip-back .flip-copy h3{font-size:clamp(18px,5cqw,27px);line-height:1.3}
+.flip-back .flip-copy p,.flip-back .flip-copy .flip-tags{font-size:clamp(13px,3.7cqw,18px);line-height:1.5;margin-top:7px}
+.flip-actions{gap:10px;flex-wrap:nowrap}
+.flip-actions .flip-view{min-height:34px;padding:7px 12px;font-size:clamp(13px,3.2cqw,15px);line-height:1.3;border-radius:20px}

@@ -1,3 +1,57 @@
-.glass-action{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 18px rgba(20,40,60,.08)}
-.glass-action:focus-visible{outline:3px solid #498dc4;outline-offset:3px}
-@media(prefers-reduced-transparency:reduce){.glass-action{backdrop-filter:none;-webkit-backdrop-filter:none}}
+/* GlassSurface lens shared by public actions. The label stays above the lens. */
+.public-glass-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+body[data-page] .glass-action{
+ --glass-tint:#dbe9f72e;--glass-edge:#ffffffb8;--glass-ink:var(--text);
+ position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;
+ display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ min-height:44px;padding:10px 18px;border:1px solid #8299b747;border-radius:24px;
+ background:transparent;color:var(--glass-ink);font:inherit;line-height:1.4;
+ text-decoration:none;cursor:pointer;
+ box-shadow:inset 0 1px 1px var(--glass-edge),inset 0 -1px 1px #8daaca30,0 3px 10px #10263c0a;
+ transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease;
+}
+body[data-page] .glass-action:before{
+ content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+ background:var(--glass-tint);
+ -webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);
+}
+/* Unsupported SVG backdrop filters retain the frosted material above. */
+@supports(backdrop-filter:blur(10px) url("#lens")){
+ body[data-page] .glass-action:before{backdrop-filter:blur(10px) saturate(1.15) var(--glass-lens,blur(0px))}
+}
+body[data-page] .glass-action:after{
+ content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+ background:linear-gradient(135deg,#e6f5ff26,transparent 42%,transparent 65%,#e6f5ff0d);
+ box-shadow:inset 0 0 2px 1px #f0f8ff55;
+}
+body[data-page] :is(.folio-hero,.about-hero,.photo-viewer.is-image-only) .glass-action,
+html[data-theme=dark] body[data-page] .glass-action{
+ --glass-tint:#b8d9f51a;--glass-edge:#ffffff55;--glass-ink:#edf4fc;
+ border-color:#d4e9ff47;text-shadow:0 1px 4px #06152570;
+}
+body[data-page] .glass-action:is([aria-pressed=true],.active),
+body[data-page] details[open] > summary.glass-action{
+ --glass-tint:#16314ddd;--glass-ink:#f3f8ff;--glass-edge:#e6f5ff66;
+ border-color:#9ebbd880;box-shadow:inset 0 1px 1px var(--glass-edge),inset 0 -1px 1px #6ca9d355,0 3px 10px #10263c14;
+}
+html[data-theme=dark] body[data-page] .glass-action:is([aria-pressed=true],.active),
+html[data-theme=dark] body[data-page] details[open] > summary.glass-action{
+ --glass-tint:#416d96b3;--glass-edge:#d8eeffb3;--glass-ink:#fff;border-color:#a7d4f5b3;
+}
+body[data-page] .glass-action:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+body[data-page] .glass-action:disabled{opacity:.45;cursor:default}
+@media(hover:hover) and (pointer:fine){
+ body[data-page] .glass-action:not(:disabled):hover{border-color:#82aacba6;box-shadow:inset 0 1px 2px var(--glass-edge),inset 0 -1px 1px #8bbad55c,0 5px 14px #10263c14}
+}
+body[data-page] .glass-action:not(:disabled):active{transform:scale(.98)}
+body[data-page] .glass-action:is(.icon-button,.viewer-close,[data-circular-prev],[data-circular-next],[data-cover-prev],[data-cover-next]){width:44px;height:44px;padding:0;border-radius:50%;flex-shrink:0}
+body[data-page] .category-filter{gap:8px;flex-wrap:wrap}
+body[data-page] .collection-scope{padding:0;gap:6px;background:transparent;display:flex;flex-wrap:wrap}
+body[data-page] .collection-tool > summary.glass-action{padding:8px 15px;list-style:none}
+body[data-page] .collection-tool > summary.glass-action::-webkit-details-marker{display:none}
+body[data-page] .atlas-advanced > summary.glass-action{width:100%;min-width:44px;padding:8px 0;font-size:14px}
+body[data-page] .collection-back.glass-action{margin-bottom:20px}
+@media(max-width:600px){body[data-page] .category-filter .glass-action{padding:8px 14px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){body[data-page] .glass-action{transition:none}body[data-page] .glass-action:not(:disabled):active{transform:none}}
+
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){body[data-page] .glass-action:not(:disabled):hover:not(:active){transform:scale(1.035)}}

@@ -1,11 +1,11 @@
 # README interface previews
 
-These are actual browser captures of this repository's locally running open-source edition, recorded on 2026-10-20. The images displayed in the UI are synthetic geometric illustrations from `scripts/demo.py`, not personal photography. Recordings contain no login sequence, passwords, real user records or production administration views.
+Captured on 2026-10-20 with actual browser screenshots, without artificial UI animation or generated photographs.
 
-- `home.gif` / `home.png`: daily featured carousel.
-- `viewer.gif` / `viewer.png`: image viewer, previous/next and close controls.
-- `studio.gif` / `studio.png`: synthetic media library, photo editor and album management.
+- `home.gif` / `home.png`: the author's current public website, showing the circular daily gallery and glass controls.
+- `viewer.gif` / `viewer.png`: the same public website, showing photo-card flipping, the large-image viewer and navigation.
+- `studio.gif` / `studio.png`: this repository's local open-source edition, showing its media library/editor and albums with synthetic illustrations from `scripts/demo.py`.
 
-GIFs are 1120 × 646, loop automatically and use an optimized palette. Static screenshots provide an alternative to animation. These documentation assets use the root MIT license.
+The public website's current gallery, flip-card and glass implementations are included in this repository, with the upstream React Bits license preserved. Production-only administrator modules remain excluded. The public-site photographs and identity visible in `home.*` / `viewer.*` remain the author's property; they are not MIT-licensed or supplied as deployable photo assets. Synthetic `studio.*` documentation assets use the root MIT license. No login sequence, password or production administrator view is recorded.
 
-The live website linked from the main README is a separate personal deployment; the captured UI above represents the source in this repository. The captures do not claim WeChat simulator or real-device validation.
+GIFs loop automatically with an optimized palette. Static screenshots provide an alternative. These previews do not claim WeChat simulator or real-device validation.

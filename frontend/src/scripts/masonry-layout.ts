@@ -1,20 +1,23 @@
+/* React Bits adaptation — Copyright (c) 2026 David Haz.
+ * MIT + Commons Clause; see third_party/react-bits/LICENSE.md and THIRD_PARTY_NOTICES.md.
+ */
 import {photoWall} from '../../../miniprogram/utils/photo-wall.js';
 export interface MasonrySize { width:number; height:number }
 export interface MasonryBox { x:number; y:number; width:number; height:number }
-// Conventional column packing, without third-party renderer or animation code.
+// Shortest-column placement, adapted from the supplied React Bits Masonry.
 export function masonryLayout(items:MasonrySize[],width:number){
  const gap=width<600?10:12;
- const columns=Math.max(1,Math.min(3,Math.floor((width+gap)/372)));
- const columnWidth=Math.max(1,(width-(columns-1)*gap)/columns);
- const lanes=Array.from({length:columns},(_,index)=>({index,bottom:0}));
- const boxes:MasonryBox[]=[];
- for(const item of items){
-  const lane=lanes.reduce((best,current)=>current.bottom<best.bottom?current:best);
-  const height=columnWidth*(item.width>0&&item.height>0?item.height/item.width:1);
-  boxes.push({x:lane.index*(columnWidth+gap),y:lane.bottom,width:columnWidth,height});
-  lane.bottom+=height+gap;
- }
- return {boxes,height:items.length?Math.max(...lanes.map(lane=>lane.bottom))-gap:0,columns,gap};
+ const columns=Math.max(1,Math.min(3,Math.floor((width+gap)/(360+gap))));
+ const size=Math.max(1,(width-gap*(columns-1))/columns);
+ const heights=Array<number>(columns).fill(0);
+ const boxes=items.map(item=>{
+  const column=heights.indexOf(Math.min(...heights));
+  const ratio=item.width>0&&item.height>0?item.height/item.width:1;
+  const box={x:column*(size+gap),y:heights[column],width:size,height:size*ratio};
+  heights[column]=box.y+box.height+gap;
+  return box;
+ });
+ return {boxes,height:items.length?Math.max(...heights)-gap:0,columns,gap};
 }
 
 /** A closed, irregular mosaic for small sets, using the original photo-wall solver. */

@@ -32,7 +32,7 @@ export class PhotoMasonry {
   document.addEventListener('keydown',event=>{if(event.key==='Escape')this.finishDrag()});
   const controls=document.getElementById('gallery-controls');
   if(controls){
-   controls.innerHTML='<p class="masonry-help">点击照片查看信息 · 从信息面板打开大图</p>';
+   controls.innerHTML='<p class="masonry-help">点击照片翻看信息 · 背面查看大图</p>';
    this.reset=controls.querySelector('button')!;
    if(this.reset)this.reset.onclick=()=>{this.finishDrag();this.order=[...this.original];this.syncOrder();this.layout()};
   }

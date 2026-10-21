@@ -5,16 +5,16 @@ test('named locations without coordinates stay filterable without making a fake 
 test('dragging interpolates continuously and waits for release to snap',()=>{const f=fixture(),p=f.page;p._stops=[0,100,1000,2000];p.data.railTop=200;p.data.railHeight=100;p.startSeek({touches:[{clientY:250}]});assert.equal(p.data.scrollTop,550);assert.equal(f.jobs.size,0);p.moveSeek({touches:[{clientY:300}]});assert.equal(p.data.scrollTop,550);p.endSeek();assert.equal(p.data.scrollTop,2000);assert.equal(f.jobs.size,1);});
 test('native map fits only nonempty multi-point bounds; single and unknown places use a safe center',()=>{const f=fixture(),p=f.page,calls=[];p._mapContext={includePoints:options=>{calls.push(options.points);options.success();},moveToLocation:options=>options.success()};p._mapSelection=undefined;p.commitMap();assert.equal(calls.length,1);assert.equal(calls[0].length,2);p.data.shown=[p.data.photos[0]];p._mapSelection=undefined;p.commitMap();assert.equal(calls.length,2);assert.equal(p.data.latitude,36);p.data.shown=[{id:'unknown',geo:{label:'待定位'}}];p._mapSelection=undefined;p.commitMap();assert.equal(calls.length,3);assert.equal(p.data.latitude,32);assert.equal(p.data.longitude,112);});
 
-test('rapid move events coalesce, native scrolling avoids scrollTop setData, and final target is retained',()=>{
- const f=fixture(),p=f.page,calls=[],patches=[];const original=p.setData;p.setData=function(patch,done){patches.push(patch);original.call(this,patch,done);};p._scrollContext={scrollTo:options=>calls.push(options)};p._stops=[0,100,1000,2000];p.data.railTop=200;p.data.railHeight=100;
+test('rapid rail events coalesce and use bound scroll commands even when an old native node is unusable',()=>{
+ const f=fixture(),p=f.page,patches=[];const original=p.setData;p.setData=function(patch,done){patches.push(patch);original.call(this,patch,done);};p._scrollContext={scrollTo:()=>assert.fail('stale native node must never be called')};p._stops=[0,100,1000,2000];p.data.railTop=200;p.data.railHeight=100;
  p.startSeek({touches:[{clientY:200}]});for(let i=1;i<=120;i++)p.moveSeek({touches:[{clientY:200+i/120*100}]});
- assert.equal(calls.length,0);p.onScroll({detail:{scrollTop:50}});assert.equal(p._scrollY,0);assert.equal(p.data.mapTitle,'全部足迹');
- p.endSeek();assert.equal(calls.length,1);assert.equal(calls[0].top,2000);assert.equal(calls[0].animated,false);assert.ok(patches.every(patch=>!('scrollTop' in patch)));assert.equal(p.data.ticks.length,4);f.flush();assert.equal(p.data.mapTitle,'2024 年 1 月 · 日待补充');
+ assert.equal(patches.filter(patch=>'scrollTop'in patch).length,0);p.onScroll({detail:{scrollTop:50}});assert.equal(p._scrollY,0);assert.equal(p.data.mapTitle,'全部足迹');
+ p.endSeek();assert.equal(p.data.scrollTop,2000);assert.equal(p.data.returnScrollAnimated,false);assert.equal(patches.filter(patch=>'scrollTop'in patch).length,1);f.flush();assert.equal(p.data.mapTitle,'2024 年 1 月 · 日待补充');
 });
 test('all timeline ticks remain visible with short distant ticks',()=>{const p=fixture().page;p._stops=Array.from({length:17},(_,i)=>i*100);p.data.groups=Array.from({length:15},(_,i)=>({key:'2026-10-'+String(31-i).padStart(2,'0'),items:[]}));p._scrollY=800;p.updateTracking();assert.equal(p.data.ticks.length,17);assert.equal(p.data.ticks[8].width,50);assert.equal(p.data.ticks[0].width,7);assert.equal(p.data.ticks[16].width,7);assert.ok(p.data.ticks[7].width>p.data.ticks[6].width);});
 test('map enlarges responsively and rail is exactly centered without changing frame during scrolling',()=>{for(const [width,height]of [[390,600],[320,420],[430,760]]){const p=fixture({windowWidth:width,windowHeight:height}).page;p.resize.call(Object.assign(Object.create(p),{setData(patch){assert.ok(patch.mapHeight>=120);assert.ok(patch.storyHeight>=180);assert.equal(patch.railTop+patch.railHeight/2,height/2);assert.ok(Math.abs(patch.fixedHeight+patch.storyHeight-height)<.01);}}));}});
 
-test('returning to origin also works on fallback clients after manual scrolling',()=>{const p=fixture().page,values=[],original=p.setData;p.setData=function(patch,done){if('scrollTop'in patch)values.push(patch.scrollTop);original.call(this,patch,done)};p.data.scrollTop=0;p._scrollY=900;p.top();assert.deepEqual(values,[1,0]);assert.equal(p._scrollY,0);});
+test('returning to the same bound origin works after manual scrolling',()=>{const p=fixture().page,values=[],original=p.setData;p.setData=function(patch,done){if('scrollTop'in patch)values.push(patch.scrollTop);original.call(this,patch,done)};p.onScroll({detail:{scrollTop:900}});p.data.scrollTop=0;p.top();assert.deepEqual(values,[900,0]);assert.equal(p._scrollY,0);});
 test('a day boundary never borrows the previous day photo; repeated scrolling does not refit the same selection',()=>{
  const f=fixture(),p=f.page;
  p.data.photos=[{id:'hongkong',year:2026,position:0,captured:{value:'2026-04-30'},geo:{label:'香港',latitude:22,longitude:114}},{id:'yinchuan',year:2026,position:1,captured:{value:'2026-04-01'},geo:{label:'银川',latitude:38,longitude:106}}];
@@ -83,7 +83,7 @@ test('overview of a filtered named-only place also displays that place area rath
  assert.equal(p.data.mapArea,true);assert.equal(p.data.latitude,40.53);assert.equal(p.data.longitude,107.93);assert.equal(p.data.scale,6);assert.equal(p.data.markers.length,0);
 });
 test('rail stays between headings while held; release snaps smoothly and a new gesture cancels it',()=>{
- const f=fixture(),p=f.page,calls=[];p._stops=[0,100,1000,2000];p.data.railTop=200;p.data.railHeight=100;p._scrollContext={scrollTo:o=>calls.push(o)};
+ const f=fixture(),p=f.page,calls=[];p._stops=[0,100,1000,2000];p.data.railTop=200;p.data.railHeight=100;const original=p.setData;p.setData=function(patch,done){if('scrollTop'in patch)calls.push({top:patch.scrollTop,animated:patch.returnScrollAnimated});original.call(this,patch,done)};
  p.startSeek({touches:[{clientY:251}]});const continuous=fp.scrollForTimeline(p._stops,.51);assert.ok(Math.abs(calls[0].top-continuous)<.001);assert.equal(f.jobs.size,0);
  assert.equal(p.data.mapTitle,'全部足迹');p.endSeek();assert.equal(calls.length,1);const label=p.data.timeLabel;p.snapSeek();assert.equal(p.data.timeLabel,label);assert.equal(calls[1].top,100);assert.equal(calls[1].animated,true);
  p.startSeek({touches:[{clientY:240}]});p.endSeek();p.storyTouch();const count=calls.length;p.snapSeek();assert.equal(calls.length,count);
@@ -95,13 +95,30 @@ test('same date in Tokyo and Kamakura uses separate map groups and never borrows
 test('release keeps the rail date-place selection when the next visit is closer',()=>{
  const f=fixture(),p=f.page,calls=[];
  p.data.photos=[{id:'tokyo',year:2026,position:0,captured:{value:'2026-10-07'},geo:{label:'日本 东京',latitude:35.68,longitude:139.69}},{id:'kamakura',year:2026,position:1,captured:{value:'2026-10-07'},geo:{label:'日本 镰仓',latitude:35.31,longitude:139.55}}];p.data.from=p.data.to=2026;p.render();
- p._stops=[0,100,1000,1000];p.data.railTop=200;p.data.railHeight=100;p._scrollContext={scrollTo:o=>calls.push(o)};
+ p._stops=[0,100,1000,1000];p.data.railTop=200;p.data.railHeight=100;const original=p.setData;p.setData=function(patch,done){if('scrollTop'in patch)calls.push({top:patch.scrollTop,animated:patch.returnScrollAnimated});original.call(this,patch,done)};
  p.startSeek({touches:[{clientY:251}]});assert.ok(p._scrollY>550);assert.equal(p.data.timeLabel,'2026-10-07');assert.equal(p._currentPhoto,'tokyo');
  p.endSeek();p.snapSeek();assert.equal(calls.at(-1).top,100);assert.equal(p._currentPhoto,'tokyo');f.flush();assert.equal(p.data.latitude,35.68);
  p.startSeek({touches:[{clientY:200+100*2/3}]});p.endSeek();p.snapSeek();f.flush();assert.equal(p._currentPhoto,'kamakura');assert.equal(p.data.latitude,35.31);
 });
 
-test('returning from a viewer positions the photo inside the fixed-map story only',()=>{
- let selected=[],callback;const query={in(){return this},select(selector){selected.push(selector);return this},selectAll(){return this},boundingClientRect(){return this},exec(fn){callback=fn}};
- const f=fixture(undefined,{createSelectorQuery:()=>query}),p=f.page,calls=[];p._scrollY=400;p._scrollContext={scrollTo:o=>calls.push(o)};p.revealPhoto('target');callback([{top:220},{top:830}]);assert.equal(calls[0].top,994);assert.equal(calls[0].animated,true);assert.ok(selected.includes('#atlas-photo-target'));assert.equal(p._snapPending,false);
+test('returning from a viewer queries actual scroll offset and commands only the story',()=>{
+ const selected=[];let callback;const query={in(){return this},select(selector){selected.push(selector);return this},selectAll(){return this},boundingClientRect(){return this},scrollOffset(){return this},exec(fn){callback=fn}};
+ const f=fixture(undefined,{createSelectorQuery:()=>query}),p=f.page;p._scrollY=400;p._scrollContext={scrollTo:()=>assert.fail('must not reuse a native node')};p.revealPhoto('target');callback([{top:220},{top:830},{scrollTop:400}]);assert.equal(p.data.scrollTop,1002);assert.equal(p.data.returnScrollAnimated,true);assert.ok(selected.includes('#atlas-photo-target'));assert.equal(p._snapPending,false);
+});
+test('device regression: hide, return to another date, then keep scrubbing photos, ticks and native map',()=>{
+ let actual=400,mapContexts=0;const commands=[];
+ const query=()=>{const ops=[];return{in(){return this},select(selector){ops.push({selector});return this},selectAll(){ops.push({many:true});return this},boundingClientRect(){ops.at(-1).rect=true;return this},scrollOffset(){ops.at(-1).offset=true;return this},exec(fn){if(ops.some(op=>op.many)){fn([null]);return;}fn(ops.map(op=>op.offset?{scrollTop:actual}:op.selector==='.timeline-scroll'?{top:220}:op.selector==='#atlas-photo-b'?{top:220+1200-actual}:null));}}};
+ const f=fixture(undefined,{createSelectorQuery:query,createMapContext:()=>{mapContexts++;return{includePoints:o=>o.success()}}}),p=f.page;
+ p._stops=[0,100,1000,2000];p._photoStops=[{id:'a',top:150,left:0},{id:'b',top:1200,left:0}];p.onScroll({detail:{scrollTop:actual}});
+ const original=p.setData;p.setData=function(patch,done){original.call(this,patch,done);if('scrollTop'in patch){commands.push({top:patch.scrollTop,animated:patch.returnScrollAnimated});actual=patch.scrollTop;this.onScroll({detail:{scrollTop:actual}});}};
+ p._scrollContext={scrollTo:()=>assert.fail('iOS node retained across hide is invalid')};p.onHide();p.onShow();assert.equal(mapContexts,1);
+ p.revealPhoto('b');assert.equal(commands.at(-1).top,1192);assert.equal(commands.at(-1).animated,true);p.verifyReturn();f.flush();assert.equal(actual,1192);assert.equal(p._returningPhoto,null);assert.equal(p._currentPhoto,'b');assert.equal(p.data.timeLabel,'2024 年 1 月 · 日待补充');assert.equal(p.data.latitude,31);assert.equal(p.data.mapDescription,'上海');
+ p.data.railTop=200;p.data.railHeight=100;p.startSeek({touches:[{clientY:230}]});p.endSeek();f.flush();assert.equal(p._currentPhoto,'a');assert.equal(p.data.latitude,36);assert.equal(p.data.timeLabel,'2025 年 1 月 · 日待补充');assert.ok(actual<1000);
+ p.startSeek({touches:[{clientY:275}]});p.endSeek();f.flush();assert.equal(p._currentPhoto,'b');assert.equal(p.data.latitude,31);assert.ok(actual>=1000);
+ p.top();f.flush();assert.equal(actual,0);assert.equal(p.data.timeLabel,'全部足迹');assert.equal(p.data.mapTitle,'全部足迹');
+});
+test('hidden callbacks and unfinished return scrolling cannot override a later rail gesture',()=>{
+ let callback;const query={in(){return this},select(){return this},selectAll(){return this},boundingClientRect(){return this},scrollOffset(){return this},exec(fn){callback=fn}};
+ const p=fixture(undefined,{createSelectorQuery:()=>query}).page;p.revealPhoto('b');p.onHide();callback([{top:200},{top:1000},{scrollTop:0}]);assert.equal(p._returningPhoto,null);assert.equal(p.data.scrollTop,0);
+ p._hidden=false;p._returningPhoto={id:'b',top:900,revision:p._returnRevision,attempt:0};p.verifyReturn();p._stops=[0,100,1000];p.data.railTop=0;p.data.railHeight=100;p.startSeek({touches:[{clientY:0}]});callback([{scrollTop:900}]);assert.equal(p._returningPhoto,null);assert.equal(p._scrollY,0);
 });

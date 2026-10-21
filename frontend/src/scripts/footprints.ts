@@ -48,7 +48,7 @@ function image(photo:Photo,sizes:string,eager=false,full=false):string {
   return `<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-preview-src="${esc(clear.src)}" data-preview-srcset="${esc(clear.srcset)}" data-preview-small="${esc(small.src)}" data-preview-lite="${esc(lite.src)}" data-preview-fallback="/media/${esc(photo.id)}/480.webp" data-preview-clear-fallback="${esc(fallback)}" sizes="${sizes}" width="${photo.width}" height="${photo.height}" style="aspect-ratio:${photo.width}/${photo.height}" alt="${esc(photo.alt||photo.title)}" decoding="async"/>`;
 }
 function photoLink(photo:Photo):string {return '/photos/'+encodeURIComponent(photo.slug)}
-function open(photo:Photo):void {document.dispatchEvent(new CustomEvent('photo-atlas:open-photo',{detail:{photos:shown,index:shown.findIndex(item=>item.id===photo.id),pure:true}}))}
+function open(photo:Photo):void {const ordered=[...groups.values()].flat();document.dispatchEvent(new CustomEvent('photo-atlas:open-photo',{detail:{photos:ordered,index:ordered.findIndex(item=>item.id===photo.id),pure:true}}))}
 function plainClick(event:MouseEvent):boolean {return event.button===0&&!event.metaKey&&!event.ctrlKey&&!event.shiftKey&&!event.altKey}
 function uncertainty(photo:Photo):string {return photo.geo?.status==='approximate'?' · 地点推测':''}
 function syncUrl():void {

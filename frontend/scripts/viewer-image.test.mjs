@@ -7,11 +7,11 @@ const compile=file=>ts.transpileModule(readFileSync(new URL('../src/scripts/'+fi
 const preview={};vm.runInNewContext(compile('photo-preview'),{exports:preview});
 const flush=async()=>{for(let i=0;i<5;i++)await Promise.resolve()};
 function fixture(){
- const requests=[],exports={};
- class Image{decode(){return new Promise((resolve,reject)=>requests.push({src:this.src,resolve,reject}))}}
+ const requests=[],instances=[],exports={};
+ class Image{constructor(){instances.push(this)}decode(){return new Promise((resolve,reject)=>requests.push({src:this.src,resolve,reject}))}}
  vm.runInNewContext(compile('viewer-image'),{exports,Image,require:()=>preview});
  const image={style:{},dataset:{},removeAttribute(){},complete:true,naturalWidth:320},status={},retry={};
- return {loader:exports.viewerImage(image,status,retry),image,status,retry,requests};
+ return {loader:exports.viewerImage(image,status,retry),image,status,retry,requests,instances};
 }
 const photo=id=>({id,width:600,height:900,title:id,src:'/old.jpg',srcset:'',thumbnail:{src:'/small-'+id,srcset:''}});
 test('preview appears first; late full image cannot replace a newer selection',async()=>{
@@ -27,4 +27,10 @@ test('failed full image preserves preview and offers a functional retry',async()
 test('closing invalidates pending decodes and clears retry selection',async()=>{
  const f=fixture();f.loader.show(photo('a'));f.loader.cancel();f.requests[0].resolve();await flush();
  assert.equal(f.image.src,'/small-a');f.retry.onclick();assert.equal(f.requests.length,1);
+});
+
+test('switching and closing cancel obsolete full requests; only tiny adjacent previews are primed',async()=>{
+ const f=fixture();f.loader.show(photo('a'));f.loader.show(photo('b'));assert.equal(f.instances[0].src,'');
+ f.loader.prime([photo('a'),photo('c'),photo('c')]);assert.equal(f.instances.length,4);assert.equal(f.instances[2].src,'/small-a');assert.equal(f.instances[3].src,'/small-c');assert.equal(f.instances[3].fetchPriority,'low');
+ f.loader.cancel();assert.equal(f.instances[1].src,'');f.requests[1].resolve();await flush();assert.equal(f.image.src,'/small-b');
 });

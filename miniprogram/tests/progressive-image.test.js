@@ -2,7 +2,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {createQueue}=require('../utils/image-queue');
 function fixture(options={}){
  let definition,id=0,now=0;const jobs=new Map(),events=[],downloads=[],queue=options.queue||createQueue();
- vm.runInNewContext(fs.readFileSync(require.resolve('../components/progressive-image/index.js'),'utf8'),{require:path=>path.includes('image-queue')?{imageQueue:queue}:{absolute:path=>path.startsWith('https://')?path:'https://portfolio.example'+path},Component:value=>definition=value,wx:{downloadFile(params){const task={params,aborted:false,abort(){this.aborted=true;params.fail({errMsg:'abort'})}};downloads.push(task);if(!options.manualDownload)params.success({statusCode:200,tempFilePath:params.url.replace('https://portfolio.example','')});return task}},setTimeout(fn,ms){jobs.set(++id,{fn,at:now+ms});return id},clearTimeout:key=>jobs.delete(key)});
+ vm.runInNewContext(fs.readFileSync(require.resolve('../components/progressive-image/index.js'),'utf8'),{require:path=>path.includes('preview-cache')?{previewCache:{remember(){},forget(){}}}:path.includes('image-queue')?{imageQueue:queue}:{absolute:path=>path.startsWith('https://')?path:'https://photos.example.test'+path},Component:value=>definition=value,wx:{downloadFile(params){const task={params,aborted:false,abort(){this.aborted=true;params.fail({errMsg:'abort'})}};downloads.push(task);if(!options.manualDownload)params.success({statusCode:200,tempFilePath:params.url.replace('https://photos.example.test','')});return task}},setTimeout(fn,ms){jobs.set(++id,{fn,at:now+ms});return id},clearTimeout:key=>jobs.delete(key)});
  const data=Object.fromEntries(Object.entries(definition.properties).map(([key,property])=>[key,property.value]));
  const component={data:{...data,...definition.data,photo:{id:options.id||'a',mapThumbnail:'/tiny',thumbnail:'/lite',fallbackThumbnail:'/legacy'},priority:true,...options.data},...definition.methods,setData(patch,done){Object.assign(this.data,patch);done?.()},triggerEvent(name,value){events.push({name,value})}};
  definition.lifetimes.attached.call(component);
@@ -38,4 +38,10 @@ test('nearby thumbnails load during scrolling while clear upgrades wait for visi
  c.data.upgrade=true;c.sync();assert.equal(f.downloads.length,1);
  c._visible=true;c.sync();assert.equal(f.downloads.length,2);
  c._visible=false;c.sync();assert.equal(c.data.quality,'preview');assert.equal(c.data.frames.length,1);
+});
+
+test('cached tiny preview is immediately visible and stale local files recover through the normal small loader',()=>{
+ const f=fixture({data:{clearSize:2400,photo:{id:'cached',mapThumbnail:'/tiny',viewerPreview:'wxfile://cached'}}}),c=f.c;
+ assert.equal(c.data.quality,'preview');assert.equal(c.data.frames[0].src,'wxfile://cached');assert.equal(c.data.frames[0].ready,true);assert.equal(f.downloads.length,1);assert.ok(f.downloads[0].params.url.endsWith('/2400.webp'));
+ const cached=c.data.frames[0].key;c.frameFailed({currentTarget:{dataset:{key:cached}}});assert.equal(f.downloads[0].aborted,true);assert.equal(c.data.quality,'none');assert.equal(c.data.frames[0].src,'/tiny');
 });

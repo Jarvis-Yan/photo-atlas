@@ -9,7 +9,7 @@ test('all card galleries open a large image with camera facts below it',()=>{
  for(const path of ['home','album-detail','footprints']){
  let page,opened;
  const wx={navigateTo:options=>opened=options.url,previewImage:()=>assert.fail('camera facts need the large-image page')};
- vm.runInNewContext(fs.readFileSync(require.resolve('../pages/'+path+'/index.js'),'utf8'),{Page:p=>page=p,require:()=>({}),wx,setTimeout,clearTimeout});
+ vm.runInNewContext(fs.readFileSync(require.resolve('../pages/'+path+'/index.js'),'utf8'),{Page:p=>page=p,require:path=>path.includes('viewer-session')?{openViewer:(items,id)=>wx.navigateTo({url:'/pages/photo/index?id='+id+'&viewer=1'})}:{},wx,setTimeout,clearTimeout});
  page.openPhoto({detail:{pure:true,photo:{id:'one'}}});
  assert.equal(opened,'/pages/photo/index?id=one&viewer=1');
  }

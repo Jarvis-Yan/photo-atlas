@@ -1,3 +1,4 @@
+const {openViewer}=require('../../utils/viewer-session');
 const {previewScroll}=require('../../utils/image-queue');
 const api=require('../../utils/api');
 const theme=require('../../utils/theme');
@@ -45,7 +46,7 @@ Page({imageFailed,
  canLoadMore(){return !this._unloaded&&this.data.galleryActive&&!this.data.loading&&!this.data.loadingMore&&!this.data.error&&this.data.mode==='all'&&this.data.photos.length>0&&this.data.photos.length<this.data.total;},
  commitPull(value){if(value.count===this.data.photos.length&&this.data.pullNear&&this.canLoadMore())return this.loadMore();},
  loadMore(){if(this.canLoadMore())return this.loadCatalog(false);},
- openPhoto(event){if(event.detail.pure){const p=event.detail.photo;if(p&&p.id)wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(p.id)+'&viewer=1'});return;}wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(event.detail.photo.id)});},
+ openPhoto(event){if(event.detail.pure){const p=event.detail.photo;if(p&&p.id)openViewer(this.data.photos,p.id);return;}wx.navigateTo({url:'/pages/photo/index?id='+encodeURIComponent(event.detail.photo.id)});},
  openAlbums(){wx.switchTab({url:'/pages/albums/index'});},openFootprints(){wx.switchTab({url:'/pages/footprints/index'});},openJournal(){wx.switchTab({url:'/pages/journal/index'});},
  openPost(event){wx.navigateTo({url:'/pages/post/index?id='+encodeURIComponent(event.currentTarget.dataset.id)});},
  onShareAppMessage(){const {settings,mode,category,query}=this.data;return{title:(settings.site_name||'Photo Atlas')+' · 摄影与记录',path:'/pages/home/index?'+api.query({view:mode==='all'?'all':'',category,q:query})};},

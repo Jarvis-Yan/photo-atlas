@@ -9,7 +9,7 @@ export function installPublicGlass(){
   '.collection-tool > summary','.atlas-advanced > summary',
   '#public-main .button','#public-main .text-button',
   '.atlas-text-button','.atlas-active-filters button',
-  '.collection-back','.viewer-toolbar button','#viewer-retry','#viewer-exif button','#viewer-exif .button'
+  '.collection-back','.viewer-step','.viewer-toolbar button','#viewer-retry','#viewer-exif button','#viewer-exif .button'
  ].join(',');
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');

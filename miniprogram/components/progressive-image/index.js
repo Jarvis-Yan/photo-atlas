@@ -1,3 +1,4 @@
+const {previewCache}=require('../../utils/preview-cache');
 const {imageQueue}=require('../../utils/image-queue');
 const {absolute}=require('../../utils/format');
 Component({
@@ -10,7 +11,7 @@ Component({
  },
  pageLifetimes:{show(){this._pageVisible=true;this.sync();},hide(){this._pageVisible=false;this.sync();}},
  methods:{
-  reset(){if(!this._mounted)return;this._revision++;this.cancel('small');this.cancel('clear');clearTimeout(this._retryTimer);this._retryAt=false;this._smallAttempt=0;this._clearAttempt=0;this._smallDone=false;this._clearDone=false;this._blocked=false;this.setData({frames:[],quality:'none',retryLabel:''},()=>this.sync());},
+  reset(){if(!this._mounted)return;this._revision++;this.cancel('small');this.cancel('clear');clearTimeout(this._retryTimer);this._retryAt=false;this._smallAttempt=0;this._clearAttempt=0;const cached=this.data.clearSize===2400&&this.data.photo&&this.data.photo.viewerPreview;this._smallDone=!!cached;this._clearDone=false;this._blocked=false;this.setData({frames:cached?[{key:this._revision+'-cached',src:cached,ready:true,stage:'cached'}]:[],quality:cached?'preview':'none',retryLabel:''},()=>this.sync());},
   sync(){
    if(!this._mounted)return;
    if(!this._pageVisible||!this.data.active||(!this.data.priority&&!this._visible&&!this._near)){this.cancel('small');this.cancel('clear');clearTimeout(this._retryTimer);this._retryAt=false;return;}
@@ -45,10 +46,10 @@ Component({
    const key=event.currentTarget.dataset.key;const job=Object.values(this._jobs).find(value=>value.key===key);if(!job||job.revision!==this._revision)return;
    const frame=this.data.frames.find(value=>value.key===key);if(!frame)return;
    clearTimeout(job.timer);delete this._jobs[job.stage];job.finish?.();
-   if(job.stage==='small')this._smallDone=true;else this._clearDone=true;
+   if(job.stage==='small'){this._smallDone=true;previewCache.remember(this.data.photo.id,frame.src);}else this._clearDone=true;
    this.setData({frames:[Object.assign({},frame,{ready:true})],quality:job.stage==='small'?'preview':'clear',retryLabel:''},()=>{this.triggerEvent('qualitychange',{quality:this.data.quality,src:frame.src});this.sync();});
   },
-  frameFailed(event){const key=event.currentTarget.dataset.key;const job=Object.values(this._jobs).find(value=>value.key===key);if(job)this.failure(job);},
+  frameFailed(event){const key=event.currentTarget.dataset.key;const job=Object.values(this._jobs).find(value=>value.key===key);if(job)this.failure(job);else if(this.data.frames.some(frame=>frame.key===key&&frame.stage==='cached')){previewCache.forget(this.data.photo.id);this._smallDone=false;this.cancel('clear');this.setData({frames:[],quality:'none'},()=>this.sync());}},
   failure(job){
    if(this._jobs[job.stage]!==job||job.revision!==this._revision)return;
    clearTimeout(job.timer);delete this._jobs[job.stage];job.task?.abort();job.finish?.();

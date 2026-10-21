@@ -47,7 +47,6 @@ viewer?.addEventListener('close',()=>{const selected=viewerPhotos[currentIndex];
 viewer?.querySelector('.viewer-close')?.addEventListener('click',()=>viewer.close());
 document.getElementById('viewer-prev')?.addEventListener('click',()=>openViewer(currentIndex-1,viewerPhotos,viewerPure));
 document.getElementById('viewer-next')?.addEventListener('click',()=>openViewer(currentIndex+1,viewerPhotos,viewerPure));
-viewer?.addEventListener('click',event=>{if(event.target===viewer)viewer.close()});
 document.addEventListener('keydown',event=>{if(!viewer?.open)return;const step=viewerKeyStep(event);if(!step)return;event.preventDefault();if(viewerPhotos.length>1)openViewer(currentIndex+step,viewerPhotos,viewerPure)});
 const albumSlot='(max-width:700px) calc(100vw - 40px), (max-width:1512px) calc(45vw - 20px), 656px';
 function albumCards(albums:Album[]){return albums.map((album,index)=>{

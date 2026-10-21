@@ -1,4 +1,4 @@
-const {viewerPhotos,rememberViewer}=require('../../utils/viewer-session');
+const {openViewer,viewerPhotos,rememberViewer}=require('../../utils/viewer-session');
 const {previewCache}=require('../../utils/preview-cache');
 const {previewScroll}=require('../../utils/image-queue');
 const api = require('../../utils/api');
@@ -15,14 +15,14 @@ Page({onPageScroll:previewScroll,
   onLoad(options){const id=decodeURIComponent(options.id||'');this.setData({id,viewer:options.viewer==='1'});this._viewerPhotos=this.data.viewer?viewerPhotos(id):[];const index=this._viewerPhotos.findIndex(p=>p.id===id);if(index>=0)this.selectViewer(index);else this.load();},
   onUnload(){this._loadRevision=(this._loadRevision||0)+1;},
   onResize(){if(this.data.viewer&&this.data.photo)this.resizeViewer(this.data.photo);},
-  resizeViewer(photo){const info=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();this.setData({viewerHeight:Math.max(120,Math.min((info.windowWidth-120)*photo.height/photo.width,info.windowHeight*.76))});},
+  resizeViewer(photo){const info=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();this.setData({viewerHeight:Math.max(120,Math.min((info.windowWidth*606/750)*photo.height/photo.width,info.windowHeight*.86))});},
   selectViewer(index){const list=this._viewerPhotos||[];if(!list.length)return;this._loadRevision=(this._loadRevision||0)+1;index=(index+list.length)%list.length;const original=list[index],photo=Object.assign({},original,{viewerPreview:previewCache.peek(original.id)||''});rememberViewer(photo.id);this.setData({id:photo.id,photo,viewerCount:list.length,viewerIndex:index,loading:false,error:''});this.resizeViewer(photo);wx.setNavigationBarTitle({title:photo.title});previewCache.prime([list[(index+1)%list.length],list[(index+list.length-1)%list.length]]);},
   previous(){this.switchViewer(-1);},next(){this.switchViewer(1);},
   switchViewer(step){if((this._viewerPhotos||[]).length<2)return;this.selectViewer(this.data.viewerIndex+step);wx.pageScrollTo({scrollTop:0,duration:0});},
   onShow(){theme.pageTheme(this);},
   onPullDownRefresh(){this.load(true).finally(()=>wx.stopPullDownRefresh());},
   async load(force){const revision=this._loadRevision=(this._loadRevision||0)+1;this.setData({loading:true,error:''});try{const photo=await api.onePhoto(this.data.id,force);if(revision!==this._loadRevision)return;this.setData({photo,loading:false});if(this.data.viewer)this.resizeViewer(photo);wx.setNavigationBarTitle({title:photo.title});}catch(error){if(revision===this._loadRevision)this.setData({loading:false,error:api.message(error)});}},
-  preview(){const p=this.data.photo;if(p)wx.previewImage({current:p.preview,urls:[p.preview],showmenu:true});},
+  preview(){const p=this.data.photo;if(p&&!this.data.viewer)openViewer([p],p.id);},
   async save(){
     const p=this.data.photo;if(!p||!p.download||this.data.saving)return;
     this.setData({saving:true});wx.showLoading({title:'准备预览图'});
@@ -35,6 +35,6 @@ Page({onPageScroll:previewScroll,
       else wx.showToast({title:'保存失败，请稍后重试',icon:'none'});
     }finally{wx.hideLoading();this.setData({saving:false});}
   },
-  onShareAppMessage(){const p=this.data.photo||{};return{title:p.title||'Photo Atlas 作品',path:'/pages/photo/index?id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
-  onShareTimeline(){const p=this.data.photo||{};return{title:p.title||'Photo Atlas 作品',query:'id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
+  onShareAppMessage(){const p=this.data.photo||{};return{title:p.title||'PhotoAtlas 作品',path:'/pages/photo/index?id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
+  onShareTimeline(){const p=this.data.photo||{};return{title:p.title||'PhotoAtlas 作品',query:'id='+encodeURIComponent(this.data.id),imageUrl:p.src||''};},
 });

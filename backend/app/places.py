@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 
 COUNTRIES={'日本':'JP','japan':'JP','韩国':'KR','korea':'KR','中国':'CN','china':'CN','香港':'HK','hong kong':'HK','台湾':'TW','法国':'FR','france':'FR','英国':'GB','united kingdom':'GB','美国':'US','united states':'US'}
-PREFERRED={'Nara-shi':'奈良','Fujikawaguchiko':'河口湖','Ōsaka':'大阪','Kōbe':'神户','Tokyo':'东京','Kyoto':'京都','Osaka':'大阪','Nara':'奈良','Uji':'宇治','Himeji':'姬路','Kobe':'神户','Shanghai':'上海','Beijing':'北京','Dali':'大理','Guiyang':'贵阳','Linyi':'临沂','Seoul':'首尔','Hong Kong':'香港'}
+PREFERRED={'Kamakura':'镰仓','Nara-shi':'奈良','Fujikawaguchiko':'河口湖','Ōsaka':'大阪','Kōbe':'神户','Tokyo':'东京','Kyoto':'京都','Osaka':'大阪','Nara':'奈良','Uji':'宇治','Himeji':'姬路','Kobe':'神户','Shanghai':'上海','Beijing':'北京','Dali':'大理','Guiyang':'贵阳','Linyi':'临沂','Seoul':'首尔','Hong Kong':'香港'}
 ANCHORS={'趵突泉':('Jinan','CN'),'大明湖':('Jinan','CN'),'春日大社':('Nara','JP'),'河口湖':('Fujikawaguchiko','JP'),'东京塔':('Tokyo','JP'),'六本木':('Tokyo','JP'),'浅草寺':('Tokyo','JP'),'台场':('Tokyo','JP'),'涩谷':('Tokyo','JP'),'新宿':('Tokyo','JP'),'金阁寺':('Kyoto','JP'),'清水寺':('Kyoto','JP'),'伏见稻荷':('Kyoto','JP'),'奈良公园':('Nara','JP'),'姬路城':('Himeji','JP'),'神户':('Kobe','JP'),'祈年殿':('Beijing','CN'),'角楼':('Beijing','CN'),'天坛':('Beijing','CN'),'故宫':('Beijing','CN'),'北外滩':('Shanghai','CN'),'外滩':('Shanghai','CN'),'东方明珠':('Shanghai','CN'),'六本木站':('Tokyo','JP')}
 
 _CACHE=None
@@ -57,7 +57,7 @@ def matches(text,country=''):
     matched=[k for k in matched if k!='海南' or country=='JP']
     matched=[k for k in matched if not any(k!=other and k in other and len(other)>len(k) for other in matched)]
     # Short town aliases inside unrelated longer words are not place evidence.
-    matched=[k for k in matched if k in ANCHORS or not re.fullmatch(r'[\u3400-\u9fff]{2}',k) or any(r['population']>=1000000 for r in index[k]) or any(chunk.startswith(k) for chunk in re.findall(r'[\u3400-\u9fff]+',text))]
+    matched=[k for k in matched if k in ANCHORS or not re.fullmatch(r'[\u3400-\u9fff]{2}',k) or any(r['population']>=1000000 for r in index[k]) or any(chunk.startswith(k) or any(code==country and chunk.startswith(prefix+k) for prefix,code in COUNTRIES.items()) for chunk in re.findall(r'[\u3400-\u9fff]+',text))]
     for key in matched:
         choices=[r for r in index[key] if not country or r['country']==country]
         if not choices:continue

@@ -68,3 +68,17 @@ test('rail selection snaps to date headings including a short final date on both
  assert.equal(exports.dateTimeline([220,1300,1900],2484,600,334,16).tail,334);
  assert.deepEqual(Array.from(exports.dateTimeline([220,1300],2400,600,0,16).stops),[0,204,1284,1284]);
 });
+
+test('date and place keys split a mixed-location day without losing photos or unknown places',()=>{
+ const visits=exports.visitGroups([photo('tokyo',{geo:{label:'日本 东京'}}),photo('kamakura',{geo:{label:'日本 镰仓'}}),photo('tokyo2',{geo:{label:'日本 东京'}}),photo('unknown',{geo:{}})]);
+ assert.equal(visits.size,3);assert.deepEqual(Array.from(visits.values(),list=>ids(list)),[['tokyo','tokyo2'],['kamakura'],['unknown']]);const key=Array.from(visits.keys())[1];assert.equal(exports.visitPlace(key),'日本 镰仓');assert.equal(exports.visitDate(key),'2026-07-11');assert.ok(exports.visitTitle(key).includes('日本 镰仓'));
+});
+test('release follows the displayed rail group even when the next heading is physically closer',()=>{
+ const stops=[0,100,1000,1000];
+ const y=exports.scrollForTimeline(stops,.51);assert.ok(y>550&&y<1000);
+ assert.equal(exports.displayedHeadingIndex(stops,y),1);
+ assert.equal(stops[exports.displayedHeadingIndex(stops,y)],100);
+ assert.equal(exports.displayedHeadingIndex(stops,1000),2);
+ assert.equal(exports.displayedHeadingIndex(stops,0),0);
+ assert.equal(exports.displayedHeadingIndex([],100),0);
+});

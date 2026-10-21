@@ -9,7 +9,7 @@ import type * as maplibregl from 'maplibre-gl';
 import type {GeoJSONSource} from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {api,escaped as esc,notice,errorText,type Photo} from './api';
-import {photoYear,located,filterPhotos,placeGroups,dayGroups,dayTitle,dayLabel,dateLabel,snapTimeline,dateTimeline,timelineForScroll,type AtlasFilter} from './footprints-model';
+import {photoYear,located,filterPhotos,placeGroups,visitGroups,visitTitle,visitLabel,dayTitle,dateLabel,scrollForTimeline,displayedHeadingIndex,dateTimeline,timelineForScroll,type AtlasFilter} from './footprints-model';
 
 const el=<T extends HTMLElement=HTMLElement>(id:string)=>document.getElementById(id) as T;
 const params=new URLSearchParams(location.search);
@@ -23,6 +23,15 @@ let groups=new Map<string,Photo[]>(),timeKeys:string[]=[],timeStops:number[]=[];
 let currentKey='',currentPhotoId='',trackingFrame=0,measureFrame=0,railDragging=false;
 let mapOverview=true,mapDayKey='',mapPhotoId='';
 const mapSettlement=settledTask(commitMapSelection);
+let snapPending=false;
+const seekSettlement=settledTask(()=>{
+ if(!snapPending)return;snapPending=false;
+ const top=timeStops[displayedHeadingIndex(timeStops,story.scrollTop)]??0;
+ if(Math.abs(top-story.scrollTop)>1)story.scrollTo({top,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+ mapSettlement.release();
+},180);
+function cancelSnap(){snapPending=false;seekSettlement.release();seekSettlement.cancel();mapSettlement.release()}
+
 const previews=new PreviewLoader(el('atlas-gallery'));
 const contextPreviews=new PreviewLoader(el('atlas-preview'),2,1);
 let photoStops:Array<{key:string;id:string;top:number;left:number}>=[];
@@ -80,8 +89,8 @@ function renderGallery():void {
   el('atlas-result-title').textContent=filter.place||'拍摄记录';
   const unknown=shown.filter(photo=>!photoYear(photo)).length;
   el('atlas-result-count').textContent=`${shown.length} 张作品${unknown?' · '+unknown+' 张日期待补充':''}`;
-  groups=dayGroups(shown);timeKeys=[...groups.keys()];
-  el('atlas-gallery').innerHTML=shown.length?[...groups].map(([key,list],index)=>`<section class="atlas-day-group" id="day-${key}" aria-labelledby="day-title-${key}"><div class="atlas-day-heading"><h3 id="day-title-${key}">${dayTitle(key)}</h3><span>${list.length} 张作品</span></div><div class="atlas-work-grid">${list.map((photo,i)=>card(photo,key,index===0&&i===0,i===0)).join('')}</div></section>`).join(''):'<div class="atlas-empty"><p>没有符合当前筛选的作品。</p><button type="button" class="atlas-text-button" data-reset>清除筛选，浏览全部作品</button></div>';
+  groups=visitGroups(shown);timeKeys=[...groups.keys()];
+  el('atlas-gallery').innerHTML=shown.length?[...groups].map(([key,list],index)=>`<section class="atlas-day-group" id="day-${key}" aria-labelledby="day-title-${key}"><div class="atlas-day-heading"><h3 id="day-title-${key}">${esc(visitTitle(key))}</h3><span>${list.length} 张作品</span></div><div class="atlas-work-grid">${list.map((photo,i)=>card(photo,key,index===0&&i===0,i===0)).join('')}</div></section>`).join(''):'<div class="atlas-empty"><p>没有符合当前筛选的作品。</p><button type="button" class="atlas-text-button" data-reset>清除筛选，浏览全部作品</button></div>';
 }
 function renderContext():void {
   const photo=shown.find(item=>item.id===mapPhotoId);
@@ -110,7 +119,7 @@ function syncAtlasLayout():void {
 }
 function scheduleMapUpdate():void {
   // Stop a previous camera transition immediately; do not chase a moving page.
-  map?.stop();el('atlas-map-panel').setAttribute('aria-busy','true');mapSettlement.schedule();
+  map?.stop();el('atlas-map-panel').setAttribute('aria-busy','true');if(snapPending)seekSettlement.schedule();else mapSettlement.schedule();
 }
 function commitMapSelection():void {
   if(!shown.length)return;
@@ -143,8 +152,7 @@ function trackScroll():void {
   cancelAnimationFrame(trackingFrame);trackingFrame=0;
   if(!timeKeys.length||!timeStops.length)return;
   const scroll=story.scrollTop;
-  let index=0;
-  for(let i=1;i<timeKeys.length;i++){if(timeStops[i+1]<=scroll+1)index=i;else break}
+  const index=Math.max(0,displayedHeadingIndex(timeStops,scroll)-1);
   const key=timeKeys[index],line=scroll+readingOffset()+12;
   const candidates=photoStops.filter(point=>point.key===key);
   let current=candidates[0];for(const point of candidates){if(point.top<=line)current=point;else break}
@@ -152,7 +160,7 @@ function trackScroll():void {
   const value=scroll<=2?0:timelineForScroll(timeStops,scroll);
   if(!railDragging)progress.value=String(Math.round(value*1000));
   rail.style.setProperty('--time-progress',(value*100)+'%');
-  const label=scroll<=2?'全部足迹':dayLabel(key);
+  const label=scroll<=2?'全部足迹':visitLabel(key);
   el('atlas-time-current').textContent=label;progress.setAttribute('aria-valuetext',label);
   const active=scroll<=2?0:scroll>=timeStops[timeStops.length-1]-1?timeKeys.length+1:index+1;
   el('atlas-time-ticks').querySelectorAll<HTMLElement>('[data-tick]').forEach(tick=>{
@@ -165,11 +173,11 @@ function trackScroll():void {
 }
 function queueTracking():void {if(!trackingFrame)trackingFrame=requestAnimationFrame(trackScroll)}
 function seekProgress(value:number):void {
-  if(!timeStops.length)return;previews.pause();scheduleMapUpdate();
-  story.scrollTo({top:snapTimeline(timeStops,value),behavior:'instant'});queueTracking();
+  if(!timeStops.length)return;previews.pause();snapPending=true;mapSettlement.hold();scheduleMapUpdate();
+  story.scrollTo({top:scrollForTimeline(timeStops,value),behavior:'instant'});queueTracking();
 }
 function render():void {
-  if(!loaded)return;
+  if(!loaded)return;cancelSnap();
   shown=filterPhotos(photos,filter);updateControls();renderGallery();el('atlas-gallery').querySelectorAll<HTMLElement>('.atlas-work').forEach(preparePhotoFlip);previews.watch();renderRail();
   el('atlas-map-panel').hidden=!shown.length;el('atlas-retry').hidden=true;
   if(shown.length){currentKey=timeKeys[0];currentPhotoId=groups.get(currentKey)![0].id;document.getElementById('work-'+currentPhotoId)?.setAttribute('aria-current','true');needsFit=true;requestAnimationFrame(()=>{syncAtlasLayout();measureTimeline();commitMapSelection();publicNavigation.restore()})}
@@ -314,10 +322,12 @@ progress.onkeydown=event=>{
   const next=event.key==='Home'?0:event.key==='End'?last:event.key in steps?Math.max(0,Math.min(last,index+steps[event.key])):undefined;
   if(next===undefined)return;event.preventDefault();progress.value=String(Math.round(next/last*1000));seekProgress(next/last);
 };
-progress.addEventListener('pointerdown',()=>{railDragging=true;previews.pause();rail.dataset.dragging='true';map?.stop();mapSettlement.hold()});
-const finishSeek=()=>{if(!railDragging)return;railDragging=false;rail.dataset.dragging='false';queueTracking();mapSettlement.release()};
-window.addEventListener('pointerup',finishSeek);window.addEventListener('pointercancel',finishSeek);
-el('atlas-time-top').onclick=()=>{story.scrollTo({top:0,behavior:'instant'});queueTracking();scheduleMapUpdate()};
+progress.addEventListener('pointerdown',()=>{railDragging=true;snapPending=true;previews.pause();rail.dataset.dragging='true';map?.stop();mapSettlement.hold();seekSettlement.hold()});
+const finishSeek=()=>{if(!railDragging)return;railDragging=false;rail.dataset.dragging='false';queueTracking();seekSettlement.release()};
+window.addEventListener('pointerup',finishSeek);window.addEventListener('pointercancel',()=>{if(!railDragging)return;railDragging=false;rail.dataset.dragging='false';cancelSnap()});
+window.addEventListener('pagehide',()=>{seekSettlement.cancel();mapSettlement.cancel()});
+for(const event of ['wheel','touchstart','pointerdown'])story.addEventListener(event,()=>{if(snapPending)cancelSnap()},{passive:true});
+el('atlas-time-top').onclick=()=>{cancelSnap();story.scrollTo({top:0,behavior:'instant'});queueTracking();scheduleMapUpdate()};
 story.addEventListener('scroll',()=>{queueTracking();scheduleMapUpdate()},{passive:true});
 window.addEventListener('resize',()=>{syncAtlasLayout();needsFit=true;scheduleMapUpdate()});
 window.visualViewport?.addEventListener('resize',syncAtlasLayout);

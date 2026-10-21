@@ -15,11 +15,11 @@ test('large-image next/previous swaps immediately without waiting for metadata o
 });
 
 test('returning restores the last selected photo only on its source page, then clears the session',()=>{
- const module={exports:{}},restored=[],jobs=[];vm.runInNewContext(fs.readFileSync(require.resolve('../utils/viewer-session'),'utf8'),{module,wx:{navigateTo(){},nextTick:fn=>jobs.push(fn)}});const session=module.exports,owner={revealPhoto:id=>restored.push(id)};
- session.openViewer([photo('a'),photo('b')],'a',owner);session.rememberViewer('b');session.restoreViewer({});assert.equal(jobs.length,0);session.restoreViewer(owner);assert.equal(jobs.length,1);jobs[0]();assert.deepEqual(restored,['b']);assert.equal(session.viewerPhotos('b').length,0);
+ const module={exports:{}},restored=[],jobs=[],timers=[];vm.runInNewContext(fs.readFileSync(require.resolve('../utils/viewer-session'),'utf8'),{module,setTimeout:(fn,delay)=>timers.push({fn,delay}),wx:{navigateTo(){},nextTick:fn=>jobs.push(fn)}});const session=module.exports,owner={revealPhoto:id=>restored.push(id)};
+ session.openViewer([photo('a'),photo('b')],'a',owner);session.rememberViewer('b');session.restoreViewer({});assert.equal(jobs.length,0);session.restoreViewer(owner);assert.equal(jobs.length,1);jobs[0]();assert.equal(restored.length,0);assert.equal(timers[0].delay,240);timers[0].fn();assert.deepEqual(restored,['b']);assert.equal(session.viewerPhotos('b').length,0);
  session.openViewer([photo('a'),photo('b')],'a',owner);session.rememberViewer('b');session.rememberViewer('a');session.restoreViewer(owner);assert.equal(jobs.length,1);
 });
 test('gallery return scroll uses the selected tile bounds and the existing page scroll position',()=>{
  let component,selector,scrolled;vm.runInNewContext(fs.readFileSync(require.resolve('../components/photo-waterfall/index.js'),'utf8'),{Component:c=>component=c,require:()=>({}),wx:{pageScrollTo:o=>scrolled=o}});
- const query={select:id=>{selector=id;return query},boundingClientRect:()=>query,exec:fn=>fn([{top:420}])};component.methods.revealPhoto.call({createSelectorQuery:()=>query},'final',700);assert.equal(selector,'#gallery-photo-final');assert.equal(scrolled.scrollTop,1104);assert.equal(scrolled.duration,0);
+ const query={select:id=>{selector=id;return query},boundingClientRect:()=>query,exec:fn=>fn([{top:420}])};component.methods.revealPhoto.call({createSelectorQuery:()=>query},'final',700);assert.equal(selector,'#gallery-photo-final');assert.equal(scrolled.scrollTop,1104);assert.equal(scrolled.duration,420);
 });

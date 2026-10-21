@@ -13,7 +13,7 @@ Component({
     detached(){this._attached=false;this._observer?.disconnect();},
   },
   methods:{
-    revealPhoto(id,scrollTop){const query=this.createSelectorQuery();query.select('#gallery-photo-'+id).boundingClientRect();query.exec(result=>{if(result&&result[0])wx.pageScrollTo({scrollTop:Math.max(0,scrollTop+result[0].top-16),duration:0});});},
+    revealPhoto(id,scrollTop){const query=this.createSelectorQuery();query.select('#gallery-photo-'+id).boundingClientRect();query.exec(result=>{if(result&&result[0])wx.pageScrollTo({scrollTop:Math.max(0,scrollTop+result[0].top-16),duration:420});});},
     layout(){if(!this._attached)return;
       if(this.data.layoutMode!=='legacy'){
        const photos=this.data.photos,mode=this.data.layoutMode,layout=homeGallery(photos,mode,686,20,this.data.flip,this._expanded||{});

@@ -103,5 +103,5 @@ test('release keeps the rail date-place selection when the next visit is closer'
 
 test('returning from a viewer positions the photo inside the fixed-map story only',()=>{
  let selected=[],callback;const query={in(){return this},select(selector){selected.push(selector);return this},selectAll(){return this},boundingClientRect(){return this},exec(fn){callback=fn}};
- const f=fixture(undefined,{createSelectorQuery:()=>query}),p=f.page,calls=[];p._scrollY=400;p._scrollContext={scrollTo:o=>calls.push(o)};p.revealPhoto('target');callback([{top:220},{top:830}]);assert.equal(calls[0].top,994);assert.equal(calls[0].animated,false);assert.ok(selected.includes('#atlas-photo-target'));assert.equal(p._snapPending,false);
+ const f=fixture(undefined,{createSelectorQuery:()=>query}),p=f.page,calls=[];p._scrollY=400;p._scrollContext={scrollTo:o=>calls.push(o)};p.revealPhoto('target');callback([{top:220},{top:830}]);assert.equal(calls[0].top,994);assert.equal(calls[0].animated,true);assert.ok(selected.includes('#atlas-photo-target'));assert.equal(p._snapPending,false);
 });

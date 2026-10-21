@@ -3,7 +3,7 @@
   <view class="map-frame"><view class="map-surface" style="height:{{mapHeight}}px;background:var(--soft)"><map wx:if="{{mapMounted}}" id="footprints-map" class="map" style="height:100%" latitude="{{mapLatitude}}" longitude="{{mapLongitude}}" scale="{{mapScale}}" markers="{{markers}}" bindmarkertap="markerTap" binderror="mapFailed" bindregionchange="mapRegionChanged" enable-zoom enable-scroll/></view><view class="map-context" bindtap="retryMap"><text>{{mapTitle}}</text><text>{{mapError || (mapUpdating?'正在定位…':mapDescription)}}</text></view></view>
   <view class="map-note">{{mapUnavailable?'当前地点坐标待补充 · 显示全部足迹':mapArea?'地点范围参考 · 不代表精确拍摄点':'公开位置已模糊化 · 拖动右侧刻度，停下后定位'}}</view>
  </view>
- <scroll-view class="timeline-scroll" scroll-y enhanced scroll-top="{{scrollTop}}" bindscroll="onScroll" bindscrollend="scheduleMap" bindtouchstart="storyTouch" style="height:{{storyHeight}}px" show-scrollbar="false">
+ <scroll-view class="timeline-scroll" scroll-y enhanced scroll-top="{{scrollTop}}" bindscroll="onScroll" scroll-with-animation="{{returnScrollAnimated}}" bindscrollend="returnScrollEnd" bindtouchstart="storyTouch" style="height:{{storyHeight}}px" show-scrollbar="false">
   <view class="story-content">
   <view class="atlas-title"><text>摄影足迹</text><text>{{shown.length}} 张作品</text></view>
    <view class="filters"><picker class="place-select" range="{{placeLabels}}" value="{{placeIndex}}" bindchange="choosePlace"><view>{{placeLabels[placeIndex]}}</view></picker><button class="text-button" bindtap="toggleAdvanced">筛选</button><input class="input" value="{{query}}" maxlength="240" placeholder="地点、标题或标签" bindinput="onSearch"/></view>

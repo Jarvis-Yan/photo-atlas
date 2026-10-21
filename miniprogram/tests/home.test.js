@@ -34,7 +34,7 @@ test('failed home load remains retryable after category changes', async () => {
 test('returning home after a Beijing date change refreshes the edition once', () => {
   let page, requests=0;
   vm.runInNewContext(fs.readFileSync(require.resolve('../pages/home/index.js'), 'utf8'), {
-    require() { return {pageTheme(){}}; }, Page(value) { page=value; }, Date, clearTimeout, setTimeout,
+    require() { return {pageTheme(){},restoreViewer(){}}; }, Page(value) { page=value; }, Date, clearTimeout, setTimeout,
   });
   page.setData=function(patch){Object.assign(this.data,patch)};
   page._homeLoaded=true;page.data.loading=false;

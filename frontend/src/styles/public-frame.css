@@ -74,13 +74,17 @@ html.viewer-open,html.viewer-open body{overflow:hidden}
 .photo-card figure,.journey-photo figure,.album-card,.journal-empty-work figure,#about-work>a,.atlas-work figure,.atlas-context>a{position:relative}
 .preview-retry{position:absolute;z-index:4;top:8px;right:8px;margin:0;max-width:calc(100% - 16px);min-height:44px;padding:8px 12px;border:0;background:var(--surface);color:var(--blue);font-size:12px;line-height:1.4;cursor:pointer}
 
-/* Keep navigation attached to the photo, with a usable circular target on touch screens. */
+/* Keep controls in the viewer's side gutters, clear of the photograph. */
+.photo-viewer{--viewer-width:min(1300px,96vw);max-width:var(--viewer-width)}
+.photo-viewer.is-image-only{--viewer-width:min(1600px,98vw)}
 .viewer-toolbar{justify-content:flex-end}
 .viewer-image-wrap{position:relative;isolation:isolate}
-body[data-page] .viewer-image-wrap > .viewer-step{position:absolute;top:calc(50% - 22px);z-index:2;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#f0f5fc;--glass-tint:#152c48a8;--glass-edge:#ffffff70;line-height:1;transform:none;touch-action:manipulation}
+body[data-page] .photo-viewer > .viewer-step{position:fixed;top:calc(50dvh - 22px);z-index:4;width:44px;height:44px;min-height:44px;padding:0;border-radius:50%;color:#f0f5fc;--glass-tint:#152c48a8;--glass-edge:#ffffff70;line-height:1;touch-action:manipulation}
 .viewer-step span{font-size:35px;font-weight:300;line-height:1;display:block;margin-top:-3px}
-.viewer-step-prev{left:12px}.viewer-step-next{right:12px}
+.viewer-step-prev{left:calc((100vw - var(--viewer-width))/2 + 8px)}
+.viewer-step-next{right:calc((100vw - var(--viewer-width))/2 + 8px)}
+.photo-viewer .viewer-grid,.photo-viewer.is-image-only .viewer-grid{padding-left:58px;padding-right:58px}
+.viewer-photo-name{max-width:1100px;margin:18px auto 0;font-size:clamp(18px,2vw,24px);font-weight:550;line-height:1.45;overflow-wrap:anywhere}
+.viewer-grid aside h2{display:none}
 .viewer-image-wrap img[data-quality=preview]{filter:blur(2px)}
-@media(hover:hover) and (pointer:fine){body[data-page] .viewer-image-wrap > .viewer-step:not(:disabled):hover{transform:scale(1.06)}}
-body[data-page] .viewer-image-wrap > .viewer-step:not(:disabled):active{transform:scale(.97)}
-@media(max-width:600px){body[data-page] .viewer-image-wrap > .viewer-step{width:44px;height:44px;min-height:44px}.viewer-step-prev{left:6px}.viewer-step-next{right:6px}}
+@media(max-width:600px){.photo-viewer .viewer-grid,.photo-viewer.is-image-only .viewer-grid{padding-left:48px;padding-right:48px}.viewer-step-prev{left:calc((100vw - var(--viewer-width))/2 + 2px)}.viewer-step-next{right:calc((100vw - var(--viewer-width))/2 + 2px)}}

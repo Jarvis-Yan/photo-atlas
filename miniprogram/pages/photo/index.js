@@ -1,4 +1,4 @@
-const {viewerPhotos}=require('../../utils/viewer-session');
+const {viewerPhotos,rememberViewer}=require('../../utils/viewer-session');
 const {previewCache}=require('../../utils/preview-cache');
 const {previewScroll}=require('../../utils/image-queue');
 const api = require('../../utils/api');
@@ -15,8 +15,8 @@ Page({onPageScroll:previewScroll,
   onLoad(options){const id=decodeURIComponent(options.id||'');this.setData({id,viewer:options.viewer==='1'});this._viewerPhotos=this.data.viewer?viewerPhotos(id):[];const index=this._viewerPhotos.findIndex(p=>p.id===id);if(index>=0)this.selectViewer(index);else this.load();},
   onUnload(){this._loadRevision=(this._loadRevision||0)+1;},
   onResize(){if(this.data.viewer&&this.data.photo)this.resizeViewer(this.data.photo);},
-  resizeViewer(photo){const info=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();this.setData({viewerHeight:Math.max(120,Math.min((info.windowWidth-32)*photo.height/photo.width,info.windowHeight*.76))});},
-  selectViewer(index){const list=this._viewerPhotos||[];if(!list.length)return;this._loadRevision=(this._loadRevision||0)+1;index=(index+list.length)%list.length;const original=list[index],photo=Object.assign({},original,{viewerPreview:previewCache.peek(original.id)||''});this.setData({id:photo.id,photo,viewerCount:list.length,viewerIndex:index,loading:false,error:''});this.resizeViewer(photo);wx.setNavigationBarTitle({title:photo.title});previewCache.prime([list[(index+1)%list.length],list[(index+list.length-1)%list.length]]);},
+  resizeViewer(photo){const info=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();this.setData({viewerHeight:Math.max(120,Math.min((info.windowWidth-120)*photo.height/photo.width,info.windowHeight*.76))});},
+  selectViewer(index){const list=this._viewerPhotos||[];if(!list.length)return;this._loadRevision=(this._loadRevision||0)+1;index=(index+list.length)%list.length;const original=list[index],photo=Object.assign({},original,{viewerPreview:previewCache.peek(original.id)||''});rememberViewer(photo.id);this.setData({id:photo.id,photo,viewerCount:list.length,viewerIndex:index,loading:false,error:''});this.resizeViewer(photo);wx.setNavigationBarTitle({title:photo.title});previewCache.prime([list[(index+1)%list.length],list[(index+list.length-1)%list.length]]);},
   previous(){this.switchViewer(-1);},next(){this.switchViewer(1);},
   switchViewer(step){if((this._viewerPhotos||[]).length<2)return;this.selectViewer(this.data.viewerIndex+step);wx.pageScrollTo({scrollTop:0,duration:0});},
   onShow(){theme.pageTheme(this);},

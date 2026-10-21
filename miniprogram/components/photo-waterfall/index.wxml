@@ -36,7 +36,7 @@ module.exports={changed:changed,start:start,move:move,end:end,tap:tap};
 <view class="gallery-observer">
 <view class="waterfall-controls" wx:if="{{showControls && photos.length}}"><text>{{flow&&eligible?'独立滑动一列 · 另一列继续流动':'自由浏览 · 完整构图'}}</text><button wx:if="{{eligible}}" class="motion-switch" bindtap="toggle" aria-label="{{flow&&eligible?'停止自动滚动，自由浏览全部作品':'开启自动滚动'}}">{{flow&&eligible?'自由浏览':'流动浏览'}}</button></view>
 <view wx:if="{{layoutMode!=='legacy'}}" class="photo-wall home-gallery" style="height:{{wallHeight}}rpx">
- <view class="wall-photo home-tile {{flip?'flip-tile':''}}" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx;height:{{item.cardHeight}}rpx">
+ <view class="wall-photo home-tile {{flip?'flip-tile':''}}" id="gallery-photo-{{item.id}}" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx;height:{{item.cardHeight}}rpx">
   <photo-flip wx:if="{{flip}}" photo="{{item.photo}}" height="{{item.cardHeight}}" active="{{active}}" bind:resize="flipResize" bind:open="flipOpen"/>
   <view wx:else data-id="{{item.id}}" bindtap="openRow" aria-role="button" aria-label="{{item.photo.title}}"><progressive-image photo="{{item.photo}}" height="{{item.cardHeight+'rpx'}}" clear-size="960" active="{{active}}"/><view class="home-caption">{{item.photo.title}}</view></view>
  </view>
@@ -51,5 +51,5 @@ module.exports={changed:changed,start:start,move:move,end:end,tap:tap};
   </view>
 </view>
 
-<view wx:else class="photo-wall" style="height:{{wallHeight}}rpx"><view class="wall-photo" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx" data-id="{{item.id}}" bindtap="openRow"><photo-card photo="{{item}}" active="{{active}}" compact interactive="{{false}}"/></view></view>
+<view wx:else class="photo-wall" style="height:{{wallHeight}}rpx"><view class="wall-photo" id="gallery-photo-{{item.id}}" wx:for="{{wall}}" wx:key="id" style="left:{{item.x}}rpx;top:{{item.y}}rpx;width:{{item.wallWidth}}rpx" data-id="{{item.id}}" bindtap="openRow"><photo-card photo="{{item}}" active="{{active}}" compact interactive="{{false}}"/></view></view>
 </view>

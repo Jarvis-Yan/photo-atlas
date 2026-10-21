@@ -14,7 +14,7 @@
   <view class="categories"><view wx:for="{{categories}}" wx:key="value" class="tag {{category===item.value?'active':''}}" data-value="{{item.value}}" bindtap="chooseCategory">{{item.label}}</view></view>
   <view class="collection-results">
   <loading-state loading="{{loading}}" error="{{photos.length?'':error}}" bind:retry="retry" />
-  <photo-waterfall flip wx:if="{{!loading && photos.length}}" photos="{{photos}}" active="{{galleryActive}}" layout-mode="{{mode==='daily' || total<=12?'bounded':'masonry'}}" show-controls="{{false}}" bind:open="openPhoto"/>
+  <photo-waterfall id="photo-gallery" flip wx:if="{{!loading && photos.length}}" photos="{{photos}}" active="{{galleryActive}}" layout-mode="{{mode==='daily' || total<=12?'bounded':'masonry'}}" show-controls="{{false}}" bind:open="openPhoto"/>
   <view class="empty glass" wx:if="{{!loading && !loadingMore && !error && !photos.length}}"><view>{{mode==='daily'?'今日精选中没有匹配的作品。':'没有符合条件的作品。'}}</view><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" wx:if="{{mode==='daily'}}" class="button" data-mode="all" bindtap="chooseMode">查看全部作品</button><button hover-class="glass-touch" hover-start-time="0" hover-stay-time="160" class="button subtle" bindtap="clearFilters">清除筛选</button></view>
   <view class="collection-bridge {{loadingMore?'is-loading':''}}" wx:if="{{mode==='all' && photos.length && !error}}">
    <view class="bridge-meta"><text>浏览进度</text><text>{{photos.length}} / {{total}}</text></view>
